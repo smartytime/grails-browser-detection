@@ -22,7 +22,6 @@ class UserAgentIdentService extends WebTierService {
  
     boolean transactional = false
  
- 
     def getUserAgentTag()
     {
         getRequest().getHeader("user-agent")
@@ -44,102 +43,97 @@ class UserAgentIdentService extends WebTierService {
         } else {
             log.debug "User agent info does not exist in session scope, creating..."
         }
- 
-        agentInfo = [:]
- 
- 
- 
- 
-        def browserVersion
+
+	    def browserVersion
         def browserType
         def operatingSystem
  
         def platform
         def security = "unknown"
         def language = "en-US"
+
+	    agentInfo = [:]
  
         if (userAgent == null) {
             agentInfo.browserType = UserAgentIdentService.CLIENT_UNKNOWN
             return agentInfo
         }
  
-        browserType = UserAgentIdentService.CLIENT_OTHER;
+        browserType = UserAgentIdentService.CLIENT_OTHER
  
-        int pos = -1;
+        int pos = -1
         if ((pos = userAgent.indexOf("Firefox")) >= 0) {
-            browserType = UserAgentIdentService.CLIENT_FIREFOX;
-            browserVersion = userAgent.substring(pos + 8).trim();
+            browserType = UserAgentIdentService.CLIENT_FIREFOX
+            browserVersion = userAgent.substring(pos + 8).trim()
             if (browserVersion.indexOf(" ") > 0)
-                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "));
-            log.debug("Browser type: Firefox " + browserVersion);
+                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "))
+            log.debug("Browser type: Firefox " + browserVersion)
         } 
         if ((pos = userAgent.indexOf("Chrome")) >= 0) {
-            browserType = UserAgentIdentService.CLIENT_CHROME;
-            browserVersion = userAgent.substring(pos + 7).trim();
+            browserType = UserAgentIdentService.CLIENT_CHROME
+            browserVersion = userAgent.substring(pos + 7).trim()
             if (browserVersion.indexOf(" ") > 0)
-                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "));
-            log.debug("Browser type: Chrome " + browserVersion);
+                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "))
+            log.debug("Browser type: Chrome " + browserVersion)
  
         } 
         if ((pos = userAgent.indexOf("Safari")) >= 0 && (userAgent.indexOf("Chrome") == -1)) {
-            browserType = UserAgentIdentService.CLIENT_SAFARI;
-            browserVersion = userAgent.substring(pos + 7).trim();
+            browserType = UserAgentIdentService.CLIENT_SAFARI
+            browserVersion = userAgent.substring(pos + 7).trim()
             if (browserVersion.indexOf(" ") > 0)
-                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "));
-            log.debug("Browser type: Safari " + browserVersion);
+                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "))
+            log.debug("Browser type: Safari " + browserVersion)
  
         } 
         if ((pos = userAgent.indexOf("BlackBerry")) >= 0) {
-            browserType = UserAgentIdentService.CLIENT_BLACKBERRY;
-            browserVersion = userAgent.substring(userAgent.indexOf("/")).trim();
+            browserType = UserAgentIdentService.CLIENT_BLACKBERRY
+            browserVersion = userAgent.substring(userAgent.indexOf("/")).trim()
             if (browserVersion.indexOf(" ") > 0)
-                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "));
-            log.debug("Browser type: BlackBerry " + browserVersion);
+                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "))
+            log.debug("Browser type: BlackBerry " + browserVersion)
  
         } 
         if ((pos = userAgent.indexOf("SeaMonkey")) >= 0) {
-            browserType = UserAgentIdentService.CLIENT_SEAMONKEY;
-            browserVersion = userAgent.substring(userAgent.indexOf("/")).trim();
+            browserType = UserAgentIdentService.CLIENT_SEAMONKEY
+            browserVersion = userAgent.substring(userAgent.indexOf("/")).trim()
             if (browserVersion.indexOf(" ") > 0)
-                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "));
-            log.debug("Browser type: SeaMonkey " + browserVersion);
+                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "))
+            log.debug("Browser type: SeaMonkey " + browserVersion)
  
         } 
         if ((pos = userAgent.indexOf("MSIE")) >= 0) {
-            browserType = UserAgentIdentService.CLIENT_MSIE;
-            browserVersion = userAgent.substring(pos + 5).trim();
+            browserType = UserAgentIdentService.CLIENT_MSIE
+            browserVersion = userAgent.substring(pos + 5).trim()
             if (browserVersion.indexOf(" ") > 0)
-                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "));
-            if (browserVersion.indexOf(";") > 0)
-                browserVersion = browserVersion.substring(0, browserVersion.indexOf(";"));
-            log.debug("Browser type: MSIE " + browserVersion);
+                browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "))
+            if (browserVersion.indexOf("") > 0)
+                browserVersion = browserVersion.substring(0, browserVersion.indexOf(""))
+            log.debug("Browser type: MSIE " + browserVersion)
  
         }
  
- 
         if (userAgent.indexOf("(") > 0) {
-            String osInfo = userAgent.substring(userAgent.indexOf("(") + 1);
-            osInfo = osInfo.substring(0, osInfo.indexOf(")"));
+            String osInfo = userAgent.substring(userAgent.indexOf("(") + 1)
+            osInfo = osInfo.substring(0, osInfo.indexOf(")"))
  
-            String[] infoParts = osInfo.split("; ");
-            platform = (infoParts.size() >0	?infoParts[0]:'');
-            operatingSystem = (infoParts.size() > 2?infoParts[2]:'');
+            String[] infoParts = osInfo.split(" ")
+            platform = (infoParts.size() >0	?infoParts[0]:'')
+            operatingSystem = (infoParts.size() > 2?infoParts[2]:'')
  
             if (browserType != UserAgentIdentService.CLIENT_MSIE && infoParts.size() > 1) {
                 if (infoParts[1].equals("U"))
-                    security = "strong";
+                    security = "strong"
                 if (infoParts[1].equals("I"))
-                    security = "weak";
+                    security = "weak"
                 if (infoParts[1].equals("N"))
-                    security = "none";
+                    security = "none"
  
-                language = (infoParts.size() > 3 ? infoParts[3]:'');
- 
+                language = (infoParts.size() > 3 ? infoParts[3]:'')
             }
  
         } else {
             if (browserType == UserAgentIdentService.CLIENT_BLACKBERRY) {
-                operatingSystem = "BlackBerry " + browserVersion;
+                operatingSystem = "BlackBerry " + browserVersion
             }
         }
  
@@ -151,7 +145,6 @@ class UserAgentIdentService extends WebTierService {
         agentInfo.language = language
         agentInfo.agentString = userAgent
  
- 
         getRequest().getSession().setAttribute("myapp.service.UserAgentIdentService.agentInfo", agentInfo)
         return agentInfo
     }
@@ -159,27 +152,27 @@ class UserAgentIdentService extends WebTierService {
  
     public boolean isChrome()
     {
-        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_CHROME);
+        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_CHROME)
     }
  
     public boolean isFirefox()
     {
-        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_FIREFOX);
+        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_FIREFOX)
     }
  
     public boolean isMsie()
     {
-        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_MSIE);
+        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_MSIE)
     }
  
     public boolean isOther()
     {
-        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_OTHER);
+        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_OTHER)
     }
  
     public boolean isSafari()
     {
-        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_SAFARI);
+        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_SAFARI)
     }
 	
 	public boolean isIPhone()	
@@ -187,91 +180,90 @@ class UserAgentIdentService extends WebTierService {
 		def userAgent = getUserAgentInfo()
         return (userAgent.browserType == UserAgentIdentService.CLIENT_SAFARI &&
 				(userAgent.platform =~ /iPhone/ || 
-				 userAgent.operatingSystem =~ /iPhone/));
+				 userAgent.operatingSystem =~ /iPhone/))
     }
  
 	public boolean isAndroid()
     {
 		def userAgent = getUserAgentInfo()
         return (userAgent.browserType == UserAgentIdentService.CLIENT_SAFARI &&
-				userAgent.operatingSystem =~ /Android/);
+				userAgent.operatingSystem =~ /Android/)
     }
  
 	public boolean isPalm()
     {
-        return (getUserAgentInfo().agentString =~ /(webOS|Palm(OS)?)/);
+        return (getUserAgentInfo().agentString =~ /(webOS|Palm(OS)?)/)
     }
 	
 	public boolean isWebkit()
     {
-        return (getUserAgentInfo().agentString =~ /WebKit/);
+        return (getUserAgentInfo().agentString =~ /WebKit/)
     }
  
 	public boolean isWindowsMobile()
     {
-        return (getUserAgentInfo().agentString =~ /(Windows CE|PPC)/);
+        return (getUserAgentInfo().agentString =~ /(Windows CE|PPC)/)
     }
  
     public boolean isBlackberry()
     {
-        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_BLACKBERRY);
+        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_BLACKBERRY)
     }
  
     public boolean isSeamonkey()
     { 
-        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_SEAMONKEY);
+        return (getUserAgentInfo().browserType == UserAgentIdentService.CLIENT_SEAMONKEY)
     }
  
 	public boolean isMobile()
     {
-        return (isIPhone() || isAndroid() || isBlackberry() || isPalm() || isWindowsMobile());
+        return (isIPhone() || isAndroid() || isBlackberry() || isPalm() || isWindowsMobile())
     }
- 
  
     public String getBrowserVersion()
     {
-        return getUserAgentInfo().browserVersion;
+        return getUserAgentInfo().browserVersion
     }
  
     public String getOperatingSystem()
     {
-        return getUserAgentInfo().operatingSystem;
+        return getUserAgentInfo().operatingSystem
     }
  
     public String getPlatform()
     {
-        return getUserAgentInfo().platform;
+        return getUserAgentInfo().platform
     }
  
     public String getSecurity()
     {
-        return getUserAgentInfo().security;
+        return getUserAgentInfo().security
     }
  
     public String getLanguage()
     {
-        return getUserAgentInfo().language;
+        return getUserAgentInfo().language
     }
  
     public String getBrowserType()
     {
         switch (getUserAgentInfo().browserType) {
         case CLIENT_FIREFOX:
-            return FIREFOX;
+            return FIREFOX
         case CLIENT_CHROME:
-            return CHROME;
+            return CHROME
         case CLIENT_SAFARI:
-            return SAFARI;
+            return SAFARI
         case CLIENT_SEAMONKEY:
-            return SEAMONKEY;
+            return SEAMONKEY
         case CLIENT_MSIE:
-            return MSIE;
+            return MSIE
         case CLIENT_BLACKBERRY:
-            return BLACKBERRY;
+            return BLACKBERRY
         case CLIENT_OTHER:
         case CLIENT_UNKNOWN:
         default:
-            return OTHER;
+            return OTHER
         }
     }
 }

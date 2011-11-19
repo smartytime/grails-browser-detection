@@ -1,0 +1,12 @@
+target
+work
+
+*.log
+
+#MacOS specific
+.DS_Store
+
+#IDEA specific
+*.iml
+*.ipr
+*.iws
