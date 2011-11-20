@@ -1,8 +1,8 @@
-package com.nolatechhelp.browserDetect
+package com.gtsarik.browserDetect
 
 import grails.test.*
 
-class GlobalTagLibTests extends TagLibUnitTestCase {
+class BrowserTagLibTests extends TagLibUnitTestCase {
     protected void setUp() {
         super.setUp()
     }

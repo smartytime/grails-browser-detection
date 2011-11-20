@@ -1,21 +1,22 @@
 <plugin name='browser-detect' version='0.1' grailsVersion='1.3.2 &gt; *'>
-  <author>Jesse Varnado	</author>
-  <authorEmail>Jesse.Varnado@nolatechhelp.com</authorEmail>
-  <title>Browser Detection Never Seemed So Easy</title>
-  <description>\
-Plugin version of Kevin M. Gill's tutorial at http://www.wthr.us/2010/02/03/simple-grails-browser-detection/
-</description>
-  <documentation>http://grails.org/plugin/browser-detect</documentation>
-  <resources>
-    <resource>BuildConfig</resource>
-    <resource>Config</resource>
-    <resource>DataSource</resource>
-    <resource>UrlMappings</resource>
-    <resource>com.nolatechhelp.browserDetect.TestController</resource>
-    <resource>com.nolatechhelp.browserDetect.UserAgentIdentService</resource>
-    <resource>com.nolatechhelp.browserDetect.WebTierService</resource>
-    <resource>com.nolatechhelp.browserDetect.GlobalTagLib</resource>
-  </resources>
-  <dependencies />
-  <behavior />
+	<author>Gennady Tsarik</author>
+	<authorEmail>vare6gin@gmail.com</authorEmail>
+	<title>Browser Detection Grails Plugin</title>
+	<description>
+		Plugin version of Kevin M. Gill's tutorial at http://www.wthr.us/2010/02/03/simple-grails-browser-detection/.
+		It was forked from https://github.com/jessevarnado/grails-detect-browser
+	</description>
+	<documentation>http://grails.org/plugin/browser-detect</documentation>
+	<resources>
+		<resource>BuildConfig</resource>
+		<resource>Config</resource>
+		<resource>DataSource</resource>
+		<resource>UrlMappings</resource>
+		<resource>com.gtsarik.browserDetect.TestController</resource>
+		<resource>com.gtsarik.browserDetect.UserAgentIdentService</resource>
+		<resource>com.gtsarik.browserDetect.WebTierService</resource>
+		<resource>com.gtsarik.browserDetect.BrowserTagLib</resource>
+	</resources>
+	<dependencies/>
+	<behavior/>
 </plugin>

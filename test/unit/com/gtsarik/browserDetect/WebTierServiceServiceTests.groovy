@@ -1,4 +1,4 @@
-package com.nolatechhelp.browserDetect
+package com.gtsarik.browserDetect
 
 import grails.test.*
 

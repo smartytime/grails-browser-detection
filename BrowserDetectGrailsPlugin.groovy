@@ -15,7 +15,7 @@ class BrowserDetectGrailsPlugin {
 
     // TODO Fill in these fields
     def author = "Jesse Varnado	"
-    def authorEmail = "Jesse.Varnado@nolatechhelp.com"
+    def authorEmail = "Jesse.Varnado@gtsarik.com"
     def title = "Browser Detection Never Seemed So Easy"
     def description = '''\\
 Plugin version of Kevin M. Gill's tutorial at http://www.wthr.us/2010/02/03/simple-grails-browser-detection/
