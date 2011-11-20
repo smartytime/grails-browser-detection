@@ -14,7 +14,7 @@ class UserAgentIdentServiceTests extends GrailsUnitTestCase {
 	def userAgentIdentService
 
     protected void setUp() {
-        super.setUp()
+	    super.setUp()
 
 	    mockLogging(UserAgentIdentService)
 	    userAgentIdentService = new UserAgentIdentService()
@@ -54,5 +54,29 @@ class UserAgentIdentServiceTests extends GrailsUnitTestCase {
 	    assert !userAgentIdentService.isIOsDevice()
 	    assert !userAgentIdentService.isMobile()
 	    assert userAgentIdentService.getBrowserVersion() == "14.0.835.202"
+	}
+
+	void testMSIE7() {
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; GTB6.4; .NET CLR 1.1.4322; FDM; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)")
+
+	    assert !userAgentIdentService.isFirefox()
+	    assert !userAgentIdentService.isChrome()
+		assert userAgentIdentService.isMsie()
+	    assert !userAgentIdentService.isIOsDevice()
+	    assert !userAgentIdentService.isMobile()
+	    assert userAgentIdentService.getBrowserVersion() == "7.0"
+	}
+
+	void testMSIE6() {
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/4.0 (compatible; MSIE 6.0; Windows 98; Rogers Hi·Speed Internet; (R1 1.3))")
+
+	    assert !userAgentIdentService.isFirefox()
+	    assert !userAgentIdentService.isChrome()
+		assert userAgentIdentService.isMsie()
+	    assert !userAgentIdentService.isIOsDevice()
+	    assert !userAgentIdentService.isMobile()
+	    assert userAgentIdentService.getBrowserVersion() == "6.0"
 	}
 }

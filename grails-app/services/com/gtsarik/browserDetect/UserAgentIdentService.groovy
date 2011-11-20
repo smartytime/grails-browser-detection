@@ -75,6 +75,8 @@ class UserAgentIdentService extends WebTierService {
 
 		// determining browser type and version
 		int pos
+		// the order of browsers for checking is significant because
+		// for example Chrome user-agent contains 'Safari' substring
 		for(Browsers browser : [Browsers.CLIENT_FIREFOX, Browsers.CLIENT_CHROME,
 				Browsers.CLIENT_SAFARI, Browsers.CLIENT_SEAMONKEY, Browsers.CLIENT_MSIE]) {
 
@@ -83,8 +85,15 @@ class UserAgentIdentService extends WebTierService {
 				// browser name and version are separated by /
 				browserVersion = userAgent.substring(pos + browser.name.length() + 1).trim()
 
-				if (browserVersion.indexOf(" ") > 0){
-					browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "))
+				// normal browsers have whitespace after version,
+				// but IE has ;
+				def stopCharacters = [" ", ";"]
+				for(int i=0; i < browserVersion.length(); i++){
+					if(browserVersion[i] in stopCharacters){
+						browserVersion = browserVersion.substring(0, i)
+
+						break
+					}
 				}
 
 				log.debug("Browser type: ${browser.name} $browserVersion")
