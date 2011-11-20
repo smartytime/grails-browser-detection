@@ -1,6 +1,8 @@
 target
 work
 
+plugin.xml
+
 *.log
 
 #MacOS specific

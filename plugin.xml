@@ -3,8 +3,8 @@
 	<authorEmail>vare6gin@gmail.com</authorEmail>
 	<title>Browser Detection Grails Plugin</title>
 	<description>
-		Plugin version of Kevin M. Gill's tutorial at http://www.wthr.us/2010/02/03/simple-grails-browser-detection/.
-		It was forked from https://github.com/jessevarnado/grails-detect-browser
+		It was forked from https://github.com/jessevarnado/grails-detect-browser.
+
 	</description>
 	<documentation>http://grails.org/plugin/browser-detect</documentation>
 	<resources>
@@ -12,7 +12,6 @@
 		<resource>Config</resource>
 		<resource>DataSource</resource>
 		<resource>UrlMappings</resource>
-		<resource>com.gtsarik.browserDetect.TestController</resource>
 		<resource>com.gtsarik.browserDetect.UserAgentIdentService</resource>
 		<resource>com.gtsarik.browserDetect.WebTierService</resource>
 		<resource>com.gtsarik.browserDetect.BrowserTagLib</resource>

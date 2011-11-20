@@ -123,6 +123,10 @@ class UserAgentIdentService extends WebTierService {
 		getUserAgent().browser.browserType == BrowserType.MOBILE_BROWSER
 	}
 
+	String getBrowserName(){
+		getUserAgent().browser.name
+	}
+
 	String getBrowserVersion() {
 		getUserAgent().browserVersion.version
 	}
@@ -141,10 +145,6 @@ class UserAgentIdentService extends WebTierService {
 
 	String getLanguage() {
 		throw new NotSupportedException()
-	}
-
-	String getBrowserName(){
-		getUserAgent().browser.name
 	}
 
 	/**
