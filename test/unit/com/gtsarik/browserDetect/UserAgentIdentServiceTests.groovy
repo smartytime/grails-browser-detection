@@ -26,7 +26,7 @@ class UserAgentIdentServiceTests extends GrailsUnitTestCase {
 	    mockCtx.demand.getCurrentRequest(9999) { request }
 	    mockCtx.demand.getSession(9999) { session }
 
-	    RCH.setRequestAttributes(mockCtx.proxyInstance())
+	    RCH.setRequestAttributes(mockCtx.proxyInstance() as RequestAttributes)
     }
 
 
@@ -40,8 +40,10 @@ class UserAgentIdentServiceTests extends GrailsUnitTestCase {
 
 	    assert userAgentIdentService.isFirefox()
 	    assert !userAgentIdentService.isChrome()
+	    assert !userAgentIdentService.isSafari()
 	    assert !userAgentIdentService.isIOsDevice()
 	    assert !userAgentIdentService.isMobile()
+	    assert userAgentIdentService.getBrowserName() == "Firefox 3"
 	    assert userAgentIdentService.getBrowserVersion() == "3.6.9"
     }
 
@@ -51,8 +53,10 @@ class UserAgentIdentServiceTests extends GrailsUnitTestCase {
 
 	    assert !userAgentIdentService.isFirefox()
 	    assert userAgentIdentService.isChrome()
+		assert !userAgentIdentService.isSafari()
 	    assert !userAgentIdentService.isIOsDevice()
 	    assert !userAgentIdentService.isMobile()
+		assert userAgentIdentService.getBrowserName() == "Chrome"
 	    assert userAgentIdentService.getBrowserVersion() == "14.0.835.202"
 	}
 
@@ -62,9 +66,11 @@ class UserAgentIdentServiceTests extends GrailsUnitTestCase {
 
 	    assert !userAgentIdentService.isFirefox()
 	    assert !userAgentIdentService.isChrome()
+		assert !userAgentIdentService.isSafari()
 		assert userAgentIdentService.isMsie()
 	    assert !userAgentIdentService.isIOsDevice()
 	    assert !userAgentIdentService.isMobile()
+		assert userAgentIdentService.getBrowserName() == "Internet Explorer 7"
 	    assert userAgentIdentService.getBrowserVersion() == "7.0"
 	}
 
@@ -74,9 +80,41 @@ class UserAgentIdentServiceTests extends GrailsUnitTestCase {
 
 	    assert !userAgentIdentService.isFirefox()
 	    assert !userAgentIdentService.isChrome()
+		assert !userAgentIdentService.isSafari()
 		assert userAgentIdentService.isMsie()
 	    assert !userAgentIdentService.isIOsDevice()
 	    assert !userAgentIdentService.isMobile()
+		assert userAgentIdentService.getBrowserName() == "Internet Explorer 6"
 	    assert userAgentIdentService.getBrowserVersion() == "6.0"
+	}
+
+	void testIPadSafari4_0_4() {
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10")
+
+	    assert !userAgentIdentService.isFirefox()
+	    assert !userAgentIdentService.isChrome()
+		assert userAgentIdentService.isSafari()
+		assert !userAgentIdentService.isMsie()
+	    assert userAgentIdentService.isIOsDevice()
+		assert userAgentIdentService.isIPad()
+	    assert userAgentIdentService.isMobile()
+		assert userAgentIdentService.getBrowserName() == "Mobile Safari"
+	    assert userAgentIdentService.getBrowserVersion() == "4.0.4"
+	}
+
+	void testIPhoneSafari4_0_4() {
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/5.0 (iPhone; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10")
+
+	    assert !userAgentIdentService.isFirefox()
+	    assert !userAgentIdentService.isChrome()
+		assert userAgentIdentService.isSafari()
+		assert !userAgentIdentService.isMsie()
+	    assert userAgentIdentService.isIOsDevice()
+		assert userAgentIdentService.isIPhone()
+	    assert userAgentIdentService.isMobile()
+		assert userAgentIdentService.getBrowserName() == "Mobile Safari"
+	    assert userAgentIdentService.getBrowserVersion() == "4.0.4"
 	}
 }

@@ -1,41 +1,15 @@
 package com.gtsarik.browserDetect
 
-import com.gtsarik.browserDetect.UserAgentIdentService.Browsers
 import nl.bitwalker.useragentutils.UserAgent
 import nl.bitwalker.useragentutils.Browser
 import nl.bitwalker.useragentutils.OperatingSystem
 import nl.bitwalker.useragentutils.RenderingEngine
 import nl.bitwalker.useragentutils.BrowserType
+import javax.transaction.NotSupportedException
 
 class UserAgentIdentService extends WebTierService {
 
 	final static String AGENT_INFO_TOKEN = "${this.name}_agentInfo"
-
-	final static String CHROME = "chrome"
-	final static String FIREFOX = "firefox"
-	final static String SAFARI = "safari"
-	final static String OTHER = "other"
-	final static String MSIE = "msie"
-	final static String UNKNOWN = "unknown"
-	final static String BLACKBERRY = "blackberry"
-	final static String SEAMONKEY = "seamonkey"
-
-	enum Browsers {
-		CLIENT_CHROME("Chrome"),
-		CLIENT_FIREFOX("Firefox"),
-		CLIENT_SAFARI("Safari"),
-		CLIENT_OTHER("Other"),
-		CLIENT_MSIE("MSIE"),
-		CLIENT_UNKNOWN("Unknown"),
-		CLIENT_BLACKBERRY("BlackBerry"),
-		CLIENT_SEAMONKEY("SeaMonkey");
-
-		final String name
-
-		Browsers(String name){
-			this.name = name
-		}
-	}
 
 	boolean transactional = false
 
@@ -43,14 +17,14 @@ class UserAgentIdentService extends WebTierService {
 		getRequest().getHeader("user-agent")
 	}
 
-	def getUserAgentInfo() {
+	def getUserAgent() {
 
 		def userAgentString = getUserAgentString()
 		def userAgent = getRequest().session.getAttribute(AGENT_INFO_TOKEN)
 
 		// returns cached instance
 		if (userAgent != null && userAgent.userAgentString == userAgentString) {
-			return userAgentInfo
+			return userAgent
 		}
 
 		if (userAgent != null && userAgent.userAgentString != userAgent) {
@@ -94,19 +68,19 @@ class UserAgentIdentService extends WebTierService {
 	}
 
 	private boolean isBrowser(Browser browserForChecking){
-		def browser = getUserAgentInfo().browser
+		def browser = getUserAgent().browser
 
 		browser.group == browserForChecking || browser == browserForChecking
 	}
 
 	private boolean isOs(OperatingSystem osForChecking){
-		def os = getUserAgentInfo().operatingSystem
+		def os = getUserAgent().operatingSystem
 
 		os.group == osForChecking || os == osForChecking
 	}
 
 	boolean isIPhone() {
-		def os = getUserAgentInfo().operatingSystem
+		def os = getUserAgent().operatingSystem
 
 		os == OperatingSystem.iOS4_IPHONE || os == OperatingSystem.MAC_OS_X_IPHONE
 	}
@@ -128,11 +102,11 @@ class UserAgentIdentService extends WebTierService {
 	}
 
 	boolean isWebkit() {
-		getUserAgentInfo().browser.renderingEngine == RenderingEngine.WEBKIT
+		getUserAgent().browser.renderingEngine == RenderingEngine.WEBKIT
 	}
 
 	boolean isWindowsMobile() {
-		def os = getUserAgentInfo().operatingSystem
+		def os = getUserAgent().operatingSystem
 
 		os == OperatingSystem.WINDOWS_MOBILE || os == OperatingSystem.WINDOWS_MOBILE7
 	}
@@ -146,67 +120,41 @@ class UserAgentIdentService extends WebTierService {
 	}
 
 	boolean isMobile() {
-		getUserAgentInfo().browser.browserType == BrowserType.MOBILE_BROWSER
+		getUserAgent().browser.browserType == BrowserType.MOBILE_BROWSER
 	}
 
 	String getBrowserVersion() {
-		getUserAgentInfo().browserVersion.version
+		getUserAgent().browserVersion.version
 	}
 
 	String getOperatingSystem() {
-		getUserAgentInfo().operatingSystem.name
+		getUserAgent().operatingSystem.name
 	}
 
 	String getPlatform() {
-		getUserAgentInfo().platform
+		throw new NotSupportedException()
 	}
 
 	String getSecurity() {
-		getUserAgentInfo().security
+		throw new NotSupportedException()
 	}
 
 	String getLanguage() {
-		getUserAgentInfo().language
+		throw new NotSupportedException()
 	}
 
+	String getBrowserName(){
+		getUserAgent().browser.name
+	}
+
+	/**
+	 * Use {@link #getBrowserName} instead. It is left for
+	 * compatibility reasons.
+	 *
+	 * @return
+	 */
+	@Deprecated
 	String getBrowserType() {
-		switch (getUserAgentInfo().browserType) {
-			case Browsers.CLIENT_FIREFOX:
-				return FIREFOX
-			case Browsers.CLIENT_CHROME:
-				return CHROME
-			case Browsers.CLIENT_SAFARI:
-				return SAFARI
-			case Browsers.CLIENT_SEAMONKEY:
-				return SEAMONKEY
-			case Browsers.CLIENT_MSIE:
-				return MSIE
-			case Browsers.CLIENT_BLACKBERRY:
-				return BLACKBERRY
-			default:
-				return OTHER
-		}
+		getBrowserName()
 	}
-}
-
-/**
- * Wraps information about user-agent. It is similar to
- * previous versions of plug-in because of compatibility reasons.
- */
-class UserAgentWrapper {
-	Browsers browserType
-	String browserVersion
-	String operatingSystem
-	String platform
-	String security
-	String language
-
-	/**
-	 * Source user-agent string
-	 */
-	String userAgentString
-	/**
-	 * All information
-	 */
-	UserAgent userAgent
 }
