@@ -1,6 +1,11 @@
 package com.gtsarik.browserDetect
 
 import com.gtsarik.browserDetect.UserAgentIdentService.Browsers
+import nl.bitwalker.useragentutils.UserAgent
+import nl.bitwalker.useragentutils.Browser
+import nl.bitwalker.useragentutils.OperatingSystem
+import nl.bitwalker.useragentutils.RenderingEngine
+import nl.bitwalker.useragentutils.BrowserType
 
 class UserAgentIdentService extends WebTierService {
 
@@ -40,202 +45,116 @@ class UserAgentIdentService extends WebTierService {
 
 	def getUserAgentInfo() {
 
-		def userAgent = getUserAgentString()
-		def userAgentInfo = getRequest().session.getAttribute(AGENT_INFO_TOKEN)
+		def userAgentString = getUserAgentString()
+		def userAgent = getRequest().session.getAttribute(AGENT_INFO_TOKEN)
 
-		// returns cached instances
-		if (userAgentInfo != null && userAgentInfo.userAgentString == userAgent) {
+		// returns cached instance
+		if (userAgent != null && userAgent.userAgentString == userAgentString) {
 			return userAgentInfo
 		}
 
-		if (userAgentInfo != null && userAgentInfo.userAgentString != userAgent) {
+		if (userAgent != null && userAgent.userAgentString != userAgent) {
 			log.warn "User agent string has changed in a single session!"
-			log.warn "Previous User Agent: ${userAgentInfo.userAgentString}"
-			log.warn "New User Agent: ${userAgent}"
+			log.warn "Previous User Agent: ${userAgent.userAgentString}"
+			log.warn "New User Agent: ${userAgentString}"
 			log.warn "Discarding existing agent info and creating new..."
 		} else {
 			log.debug "User agent info does not exist in session scope, creating..."
 		}
 
-		def browserVersion = null
-		def browserType = null
-		def operatingSystem = null
-		def platform = null
-		def security = "unknown"
-		def language = "en-US"
+		userAgent = parseUserAgent(userAgentString)
 
-		userAgentInfo = new UserAgentInfo()
-
-		if (userAgent == null) {
-			userAgentInfo.browserType = Browsers.CLIENT_UNKNOWN
-			return userAgentInfo
-		}
-
-		browserType = Browsers.CLIENT_OTHER
-
-		// determining browser type and version
-		int pos
-		// the order of browsers for checking is significant because
-		// for example Chrome user-agent contains 'Safari' substring
-		for(Browsers browser : [Browsers.CLIENT_FIREFOX, Browsers.CLIENT_CHROME,
-				Browsers.CLIENT_SAFARI, Browsers.CLIENT_SEAMONKEY, Browsers.CLIENT_MSIE]) {
-
-			if((pos = userAgent.indexOf(browser.name)) >= 0){
-				browserType = browser
-				// browser name and version are separated by /
-				browserVersion = userAgent.substring(pos + browser.name.length() + 1).trim()
-
-				// normal browsers have whitespace after version,
-				// but IE has ;
-				def stopCharacters = [" ", ";"]
-				for(int i=0; i < browserVersion.length(); i++){
-					if(browserVersion[i] in stopCharacters){
-						browserVersion = browserVersion.substring(0, i)
-
-						break
-					}
-				}
-
-				log.debug("Browser type: ${browser.name} $browserVersion")
-
-				break;
-			}
-		}
-
-		// if browser is still undefined, check for BlackBerry
-		if(browserType == Browsers.CLIENT_OTHER
-				&& userAgent.indexOf(Browsers.CLIENT_BLACKBERRY.name) >= 0){
-
-			browserType = Browsers.CLIENT_BLACKBERRY
-			// we are interested in the first occurrence of /
-			browserVersion = userAgent.substring(userAgent.indexOf("/")).trim()
-
-			if (browserVersion.indexOf(" ") > 0){
-				browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "))
-			}
-
-			log.debug("Browser type: ${Browsers.CLIENT_BLACKBERRY.name} $browserVersion")
-		}
-
-		// figuring out information about OS
-		if (userAgent.indexOf("(") > 0) {
-			String osInfo = userAgent.substring(userAgent.indexOf("(") + 1)
-			osInfo = osInfo.substring(0, osInfo.indexOf(")"))
-
-			String[] infoParts = osInfo.split(" ")
-			platform = (infoParts.size() > 0 ? infoParts[0] : '')
-			operatingSystem = (infoParts.size() > 2 ? infoParts[2] : '')
-
-			if (browserType != Browsers.CLIENT_MSIE && infoParts.size() > 1) {
-				if (infoParts[1].equals("U")){
-					security = "strong"
-				}
-				if (infoParts[1].equals("I")){
-					security = "weak"
-				}
-				if (infoParts[1].equals("N")){
-					security = "none"
-				}
-
-				language = (infoParts.size() > 3 ? infoParts[3] : '')
-			}
-
-		} else {
-			if (browserType == Browsers.CLIENT_BLACKBERRY) {
-				operatingSystem = "BlackBerry $browserVersion"
-			}
-		}
-
-		userAgentInfo.browserVersion = browserVersion
-		userAgentInfo.browserType = browserType
-		userAgentInfo.operatingSystem = operatingSystem
-		userAgentInfo.platform = platform
-		userAgentInfo.security = security
-		userAgentInfo.language = language
-		userAgentInfo.userAgentString = userAgent
-
-		getRequest().session.setAttribute(AGENT_INFO_TOKEN, userAgentInfo)
-		return userAgentInfo
+		getRequest().session.setAttribute(AGENT_INFO_TOKEN, userAgent)
+		return userAgent
 	}
 
+	private def parseUserAgent(String userAgentString){
+		UserAgent.parseUserAgentString(userAgentString)
+	}
 
 	boolean isChrome() {
-		isBrowserType(Browsers.CLIENT_CHROME)
+		isBrowser(Browser.CHROME)
 	}
 
 	boolean isFirefox() {
-		isBrowserType(Browsers.CLIENT_FIREFOX)
+		isBrowser(Browser.FIREFOX)
 	}
 
 	boolean isMsie() {
-		isBrowserType(Browsers.CLIENT_MSIE)
+		// why people use it?
+		isBrowser(Browser.IE)
 	}
 
 	boolean isOther() {
-		isBrowserType(Browsers.CLIENT_OTHER)
+		isBrowser(Browser.UNKNOWN)
 	}
 
 	boolean isSafari() {
-		isBrowserType(Browsers.CLIENT_SAFARI)
+		isBrowser(Browser.SAFARI)
 	}
 
-	private boolean isBrowserType(Browsers browserType){
-		getUserAgentInfo().browserType == browserType
+	private boolean isBrowser(Browser browserForChecking){
+		def browser = getUserAgentInfo().browser
+
+		browser.group == browserForChecking || browser == browserForChecking
+	}
+
+	private boolean isOs(OperatingSystem osForChecking){
+		def os = getUserAgentInfo().operatingSystem
+
+		os.group == osForChecking || os == osForChecking
 	}
 
 	boolean isIPhone() {
-		isIOsDevice("iPhone")
+		def os = getUserAgentInfo().operatingSystem
+
+		os == OperatingSystem.iOS4_IPHONE || os == OperatingSystem.MAC_OS_X_IPHONE
 	}
 
 	boolean isIPad() {
-		isIOsDevice("iPad")
-	}
-
-	private boolean isIOsDevice(String platform){
-		def userAgent = getUserAgentInfo()
-		return (userAgent.browserType == Browsers.CLIENT_SAFARI &&
-				(userAgent.platform =~ /${platform}/ ||
-						userAgent.operatingSystem =~ /${platform}/))
+		isOs(OperatingSystem.MAC_OS_X_IPAD)
 	}
 
 	boolean isIOsDevice() {
-		isIPhone() || isIPad()
+		isOs(OperatingSystem.IOS)
 	}
 
 	boolean isAndroid() {
-		getUserAgentInfo().operatingSystem =~ /Android/
+		isOs(OperatingSystem.ANDROID)
 	}
 
 	boolean isPalm() {
-		getUserAgentInfo().userAgentString =~ /(webOS|Palm(OS)?)/
+		isOs(OperatingSystem.PALM)
 	}
 
 	boolean isWebkit() {
-		getUserAgentInfo().userAgentString =~ /WebKit/
+		getUserAgentInfo().browser.renderingEngine == RenderingEngine.WEBKIT
 	}
 
 	boolean isWindowsMobile() {
-		getUserAgentInfo().userAgentString =~ /(Windows CE|PPC)/
+		def os = getUserAgentInfo().operatingSystem
+
+		os == OperatingSystem.WINDOWS_MOBILE || os == OperatingSystem.WINDOWS_MOBILE7
 	}
 
 	boolean isBlackberry() {
-		isBrowserType(Browsers.CLIENT_BLACKBERRY)
+		isOs(OperatingSystem.BLACKBERRY)
 	}
 
 	boolean isSeamonkey() {
-		isBrowserType(Browsers.CLIENT_SEAMONKEY)
+		isBrowser(Browser.SEAMONKEY)
 	}
 
 	boolean isMobile() {
-		isIPhone() || isAndroid() || isBlackberry() || isPalm() || isWindowsMobile()
+		getUserAgentInfo().browser.browserType == BrowserType.MOBILE_BROWSER
 	}
 
 	String getBrowserVersion() {
-		getUserAgentInfo().browserVersion
+		getUserAgentInfo().browserVersion.version
 	}
 
 	String getOperatingSystem() {
-		getUserAgentInfo().operatingSystem
+		getUserAgentInfo().operatingSystem.name
 	}
 
 	String getPlatform() {
@@ -270,12 +189,24 @@ class UserAgentIdentService extends WebTierService {
 	}
 }
 
-class UserAgentInfo {
+/**
+ * Wraps information about user-agent. It is similar to
+ * previous versions of plug-in because of compatibility reasons.
+ */
+class UserAgentWrapper {
 	Browsers browserType
 	String browserVersion
 	String operatingSystem
 	String platform
 	String security
 	String language
+
+	/**
+	 * Source user-agent string
+	 */
 	String userAgentString
+	/**
+	 * All information
+	 */
+	UserAgent userAgent
 }
