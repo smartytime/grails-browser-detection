@@ -5,8 +5,6 @@ import org.springframework.web.context.request.RequestContextHolder as RCH
 import org.springframework.web.context.request.RequestAttributes
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpSession
-import javax.servlet.http.HttpServletRequest
-import groovy.mock.interceptor.MockFor
 import groovy.mock.interceptor.StubFor
 
 class UserAgentIdentServiceTests extends GrailsUnitTestCase {
@@ -26,7 +24,7 @@ class UserAgentIdentServiceTests extends GrailsUnitTestCase {
 	    mockCtx.demand.getCurrentRequest(9999) { request }
 	    mockCtx.demand.getSession(9999) { session }
 
-	    RCH.setRequestAttributes(mockCtx.proxyInstance() as RequestAttributes)
+	    RCH.setRequestAttributes(mockCtx.proxyInstance())
     }
 
 
@@ -116,5 +114,16 @@ class UserAgentIdentServiceTests extends GrailsUnitTestCase {
 	    assert userAgentIdentService.isMobile()
 		assert userAgentIdentService.getBrowserName() == "Mobile Safari"
 	    assert userAgentIdentService.getBrowserVersion() == "4.0.4"
+	}
+
+	void testChrome14_0_835_202andVersionChecking() {
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.202 Safari/535.1")
+
+	    assert userAgentIdentService.isChrome()
+		assert userAgentIdentService.isChrome("14.0.835.202", ComparisonType.EQUAL)
+	    assert userAgentIdentService.isChrome("13.0.835", ComparisonType.GREATER)
+		assert userAgentIdentService.isChrome("15", ComparisonType.LESS)
+
 	}
 }

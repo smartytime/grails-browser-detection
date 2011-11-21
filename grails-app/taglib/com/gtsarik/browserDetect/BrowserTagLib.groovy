@@ -3,6 +3,7 @@ package com.gtsarik.browserDetect
 /**
  * <pre>
  * {@code
+ * <browser:choice>
  * <browser:isIPhone>
  *     iPhone code
  * </browser:isIPhone>
@@ -12,6 +13,7 @@ package com.gtsarik.browserDetect
  * <browser:otherwise>
  *     code for other browsers
  * </browser:otherwise>
+ * </browser:choice>
  * }
  * </pre>
  */

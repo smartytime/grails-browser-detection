@@ -17,7 +17,7 @@ class UserAgentIdentService extends WebTierService {
 		getRequest().getHeader("user-agent")
 	}
 
-	def getUserAgent() {
+	private def getUserAgent() {
 
 		def userAgentString = getUserAgentString()
 		def userAgent = getRequest().session.getAttribute(AGENT_INFO_TOKEN)
@@ -46,31 +46,97 @@ class UserAgentIdentService extends WebTierService {
 		UserAgent.parseUserAgentString(userAgentString)
 	}
 
-	boolean isChrome() {
-		isBrowser(Browser.CHROME)
+	boolean isChrome(String version = null, ComparisonType comparisonType = null) {
+		isBrowser(Browser.CHROME, version, comparisonType)
 	}
 
-	boolean isFirefox() {
-		isBrowser(Browser.FIREFOX)
+	boolean isFirefox(String version = null, ComparisonType comparisonType = null) {
+		isBrowser(Browser.FIREFOX, version, comparisonType)
 	}
 
-	boolean isMsie() {
+	boolean isMsie(String version = null, ComparisonType comparisonType = null) {
 		// why people use it?
-		isBrowser(Browser.IE)
+		isBrowser(Browser.IE, version, comparisonType)
 	}
 
-	boolean isOther() {
-		isBrowser(Browser.UNKNOWN)
+	boolean isOther(String version = null, ComparisonType comparisonType = null) {
+		isBrowser(Browser.UNKNOWN, version, comparisonType)
 	}
 
-	boolean isSafari() {
-		isBrowser(Browser.SAFARI)
+	boolean isSafari(String version = null, ComparisonType comparisonType = null) {
+		isBrowser(Browser.SAFARI, version, comparisonType)
 	}
 
-	private boolean isBrowser(Browser browserForChecking){
-		def browser = getUserAgent().browser
+	private boolean isBrowser(Browser browserForChecking, String version = null,
+	                          ComparisonType comparisonType = null){
+		def userAgent = getUserAgent()
+		def browser = userAgent.browser
 
-		browser.group == browserForChecking || browser == browserForChecking
+		// browser checking
+		if(!(browser.group == browserForChecking || browser == browserForChecking)){
+			return false
+		}
+
+		// version checking
+		if(version){
+			if(!comparisonType){
+				throw new IllegalArgumentException("comparisonType should be specified")
+			}
+
+			def compRes = compareVersions(userAgent.browserVersion.version, version)
+
+			if(compRes == 0 && comparisonType == ComparisonType.EQUAL){
+				return true
+			}
+
+			if(compRes == 1 && comparisonType == ComparisonType.GREATER){
+				return true
+			}
+
+			if(compRes == -1 && comparisonType == ComparisonType.LESS){
+				return true
+			}
+
+			return false
+		}
+
+		true
+	}
+
+	/**
+	 * Compares versions like x.y.z
+	 *
+	 * @return a negative integer, zero, or a positive integer as the first argument is less than,
+	 * equal to, or greater than the second
+	 */
+	private int compareVersions(v1, v2){
+		if(!v1){
+			if(!v2){
+				return 0
+			} else {
+				return -1
+			}
+		}
+
+		if(!v2){
+			return 1
+		}
+
+		def v1parts = v1.split("\\.")
+		def v2parts = v2.split("\\.")
+
+		def length = Math.min(v1parts.size(), v2parts.size())
+
+		int compRes
+		for(int i=0; i<length; i++){
+			compRes = v1parts[i].toInteger().compareTo(v2parts[i].toInteger())
+
+			if(compRes != 0){
+				return compRes
+			}
+		}
+
+		v1parts.size() <=> v2parts.size()
 	}
 
 	private boolean isOs(OperatingSystem osForChecking){
@@ -154,4 +220,28 @@ class UserAgentIdentService extends WebTierService {
 	String getBrowserType() {
 		getBrowserName()
 	}
+
+	/**
+	 * It is left for compatibility reasons.
+	 */
+	@Deprecated
+	def getUserAgentInfo() {
+		def userAgent = getUserAgent()
+
+		[
+			browserType: userAgent.browser.name,
+			browserVersion: userAgent.browserVersion.version,
+			operatingSystem: userAgent.operatingSystem.name,
+			platform: "",
+			security: "",
+			language: "",
+			agentString: userAgent.userAgentString
+		]
+	}
+}
+
+public enum ComparisonType {
+	LESS,
+	EQUAL,
+	GREATER
 }
