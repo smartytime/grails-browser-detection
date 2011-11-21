@@ -148,10 +148,7 @@ class UserAgentIdentService extends WebTierService {
 	}
 
 	/**
-	 * Use {@link #getBrowserName} instead. It is left for
-	 * compatibility reasons.
-	 *
-	 * @return
+	 * It is left for compatibility reasons.
 	 */
 	@Deprecated
 	String getBrowserType() {

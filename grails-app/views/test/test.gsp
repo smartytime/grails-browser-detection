@@ -4,27 +4,36 @@
         <meta name="layout" content="main" />
     </head>
     <body>
-		<nola:isMobile>
-			You are using a mobile browser.
-			<nola:isIPhone>
-				You are using the iPhone.
-			</nola:isIPhone>
-			<nola:isPalm>
-				You are using a Palm.
-			</nola:isPalm>
-		</nola:isMobile>
-	    <nola:isMsie>
-			You are using Internet Explorer
-		</nola:isMsie>
-		<nola:isFirefox>
-			You are using Firefox
-		</nola:isFirefox>
-		<nola:isChrome>
-			You are using Google Chrome
-		</nola:isChrome>
-		<nola:isBlackberry>
-			You are using the Blackberry browser
-		</nola:isBlackberry>
-		
+        You are using
+        <browser:choice>
+	        <browser:isMobile>
+		        a mobile browser. And it is...
+		        <browser:choice>
+			        <browser:isIPad>
+				        iPad!
+			        </browser:isIPad>
+			        <browser:isIPhone>
+				        iPhone!
+			        </browser:isIPhone>
+			        <browser:isAndroid>
+				        Android!
+			        </browser:isAndroid>
+			        <browser:otherwise>
+				        I do not know...
+			        </browser:otherwise>
+			    </browser:choice>
+	        </browser:isMobile>
+	        <browser:otherwise>
+		        <browser:isChrome>
+			        Chrome.
+		        </browser:isChrome>
+		        <browser:isFirefox>
+			        Firefox.
+		        </browser:isFirefox>
+		        <browser:isMsie>
+			        Internet Explorer :(
+		        </browser:isMsie>
+	        </browser:otherwise>
+        </browser:choice>
 	</body>
 </html>

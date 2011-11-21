@@ -19,11 +19,19 @@ class BrowserTagLib {
 
 	static namespace = 'browser'
 
-	/**
-	 * It is a key of token informing about logical branching results. If its value is
-	 * false, otherwise tag is rendered.
-	 */
-	private static def SUCCESS_TOKEN = "${this.name}_successToken"
+	private static def CHOICE_STACK = "${this.name}_choiceStack"
+
+	private enum HierarchyLevelType {
+		ChoiceTag,
+		ConditionTag
+	}
+
+	private class HierarchyLevelHolder {
+		HierarchyLevelType levelType
+
+		Closure otherwise
+		boolean successfulCondition
+	}
 
     def userAgentIdentService
 
@@ -128,36 +136,77 @@ class BrowserTagLib {
     }
 
 	private def handle(body, condition){
+		def stack = getStack()
+		def parent = (!stack.empty()) ? stack.peek() : null
+
+		// skip if successful condition is met in choice tag
+		if(parent && parent.levelType == HierarchyLevelType.ChoiceTag
+				&& parent.successfulCondition){
+			return
+		}
+
 		if(condition()){
+			def conditionTagHolder = new HierarchyLevelHolder()
+			conditionTagHolder.levelType = HierarchyLevelType.ConditionTag
+			stack.push(conditionTagHolder)
+
 			out << body()
-			setSuccessToken(true)
-		} else {
-			setSuccessToken(false)
+
+			stack.pop()
+
+			if(parent && parent.levelType == HierarchyLevelType.ChoiceTag){
+				parent.successfulCondition = true
+			}
+		}
+	}
+
+	def choice = { attrs, body ->
+		def stack = getStack()
+
+		if (!stack.empty() && stack.peek().levelType == HierarchyLevelType.ChoiceTag) {
+			throw new IllegalStateException("choice tag can't be putted under other choice tag")
+		}
+
+		def choiceTagHolder = new HierarchyLevelHolder()
+		choiceTagHolder.levelType = HierarchyLevelType.ChoiceTag
+		stack.push(choiceTagHolder)
+
+		out << body()
+
+		// if no successful condition and otherwise tag presented,
+		// execute otherwise tag
+		if(!choiceTagHolder.successfulCondition && choiceTagHolder.otherwise){
+			out << choiceTagHolder.otherwise()
+		}
+
+		stack.pop()
+	}
+
+	/**
+	 * Returns hierarchy stack, Creates one if it does
+	 * not exist yet.
+	 */
+	private Stack<HierarchyLevelHolder> getStack(){
+		try {
+			pageScope."$CHOICE_STACK"
+		} catch (e){
+			def stack = new Stack()
+			pageScope."$CHOICE_STACK" = stack
+
+			stack
 		}
 	}
 
 	/**
-	 * This content is rendered in case of unsuccessful conditions of
-	 * previous tags.
+	 * This content is rendered in case of nothing is true in choice tag
 	 */
 	def otherwise = { attrs, body ->
-		def token = request[SUCCESS_TOKEN]
+		def stack = getStack()
 
-		if(token == null){
-			throw new IllegalStateException("otherwise tag should be used after one of browser tags")
+		if(stack == null || stack.empty()){
+			throw new IllegalStateException("otherwise tag should be under choice tag")
 		}
 
-		if(!token){
-			out << body()
-			setSuccessToken null
-		}
-	}
-
-	/**
-	 * Sets success token. Set true to prevent "otherwise" tag execution.
-	 * Set null value after other tag is executed.
-	 */
-	private def setSuccessToken(Boolean value){
-		request[SUCCESS_TOKEN] = value
+		stack.peek().otherwise = body
 	}
 }
