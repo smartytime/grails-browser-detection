@@ -98,7 +98,7 @@ class BrowserTagLib {
     }
 
     def isMsie = { attrs, body ->
-	    handleBrowser attrs, body, { userAgentIdentService.isMsie() }
+	    handleBrowser attrs, body, "isMsie"
     }
 
     def isNotMsie = { attrs, body ->
@@ -106,7 +106,7 @@ class BrowserTagLib {
     }
 
     def isFirefox = { attrs, body ->
-	    handleBrowser attrs, body, { userAgentIdentService.isFirefox() }
+	    handleBrowser attrs, body, "isFirefox"
     }
 
     def isNotFirefox = { attrs, body ->
@@ -114,7 +114,7 @@ class BrowserTagLib {
     }
 
     def isChrome = { attrs, body ->
-	    handleBrowser attrs, body, { userAgentIdentService.isChrome() }
+	    handleBrowser attrs, body, "isChrome"
     }
 
     def isNotChrome = { attrs, body ->
@@ -122,7 +122,7 @@ class BrowserTagLib {
     }
 
     def isSafari = { attrs, body ->
-	    handleBrowser attrs, body, { userAgentIdentService.isSafari() }
+	    handleBrowser attrs, body, "isSafari"
     }
 
     def isNotSafari = { attrs, body ->

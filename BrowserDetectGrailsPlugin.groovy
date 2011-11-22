@@ -13,7 +13,9 @@ class BrowserDetectGrailsPlugin {
     def authorEmail = "vare6gin@gmail.com"
     def title = "Browser Detection Plug-in"
     def description = '''\\
-Plugin version of Kevin M. Gill's tutorial at http://www.wthr.us/2010/02/03/simple-grails-browser-detection/
+Refactored and extended version of the plugin created by Kevin M. Gill, Edvinas Bartkus, Jesse Varnado. Almost all code
+was removed and replaced with browser detection code based on user-agent-utils library (http://user-agent-utils.java.net/).
+Old interfaces are saved for compatibility reasons.
 '''
     def documentation = "http://grails.org/plugin/browser-detect"
 

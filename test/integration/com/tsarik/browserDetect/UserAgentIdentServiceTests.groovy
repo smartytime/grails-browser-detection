@@ -1,36 +1,13 @@
-package com.gtsarik.browserDetect
+package com.tsarik.browserDetect
 
 import grails.test.*
-import org.springframework.web.context.request.RequestContextHolder as RCH
-import org.springframework.web.context.request.RequestAttributes
-import org.springframework.mock.web.MockHttpServletRequest
-import org.springframework.mock.web.MockHttpSession
-import groovy.mock.interceptor.StubFor
+import com.gtsarik.browserDetect.ComparisonType
 
-class UserAgentIdentServiceTests extends GrailsUnitTestCase {
+import org.springframework.web.context.request.RequestContextHolder as RCH
+
+class UserAgentIdentServiceTests extends GroovyTestCase {
 
 	def userAgentIdentService
-
-    protected void setUp() {
-	    super.setUp()
-
-	    mockLogging(UserAgentIdentService)
-	    userAgentIdentService = new UserAgentIdentService()
-
-	    MockHttpServletRequest request = new MockHttpServletRequest()
-	    MockHttpSession session = new MockHttpSession()
-
-	    def mockCtx = new StubFor(RequestAttributes)
-	    mockCtx.demand.getCurrentRequest(9999) { request }
-	    mockCtx.demand.getSession(9999) { session }
-
-	    RCH.setRequestAttributes(mockCtx.proxyInstance())
-    }
-
-
-    protected void tearDown() {
-        super.tearDown()
-    }
 
     void testFirefox3_6_9() {
 	    RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
