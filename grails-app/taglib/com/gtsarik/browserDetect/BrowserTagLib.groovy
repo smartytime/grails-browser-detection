@@ -98,7 +98,7 @@ class BrowserTagLib {
     }
 
     def isMsie = { attrs, body ->
-	    handle body, { userAgentIdentService.isMsie() }
+	    handleBrowser attrs, body, { userAgentIdentService.isMsie() }
     }
 
     def isNotMsie = { attrs, body ->
@@ -106,7 +106,7 @@ class BrowserTagLib {
     }
 
     def isFirefox = { attrs, body ->
-	    handle body, { userAgentIdentService.isFirefox() }
+	    handleBrowser attrs, body, { userAgentIdentService.isFirefox() }
     }
 
     def isNotFirefox = { attrs, body ->
@@ -114,7 +114,7 @@ class BrowserTagLib {
     }
 
     def isChrome = { attrs, body ->
-	    handle body, { userAgentIdentService.isChrome() }
+	    handleBrowser attrs, body, { userAgentIdentService.isChrome() }
     }
 
     def isNotChrome = { attrs, body ->
@@ -122,7 +122,7 @@ class BrowserTagLib {
     }
 
     def isSafari = { attrs, body ->
-	    handle body, { userAgentIdentService.isSafari() }
+	    handleBrowser attrs, body, { userAgentIdentService.isSafari() }
     }
 
     def isNotSafari = { attrs, body ->
@@ -136,6 +136,23 @@ class BrowserTagLib {
     def isNotBlackberry = { attrs, body ->
 	    handle body, { !userAgentIdentService.isBlackberry() }
     }
+
+	private def handleBrowser(attrs, body, serviceMethodName){
+		def version = null
+		def comparisonType = null
+		if(attrs.version){
+			version = attrs.version
+			comparisonType = ComparisonType.EQUAL
+		} else if(attrs.versionLess){
+			version = attrs.versionLess
+			comparisonType = ComparisonType.LESS
+		} else if(attrs.versionMore){
+			version = attrs.versionMore
+			comparisonType = ComparisonType.GREATER
+		}
+
+		handle body, { userAgentIdentService."$serviceMethodName"(version, comparisonType) }
+	}
 
 	private def handle(body, condition){
 		def stack = getStack()

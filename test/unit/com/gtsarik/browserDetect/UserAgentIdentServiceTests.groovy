@@ -121,9 +121,20 @@ class UserAgentIdentServiceTests extends GrailsUnitTestCase {
 	        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.202 Safari/535.1")
 
 	    assert userAgentIdentService.isChrome()
-		assert userAgentIdentService.isChrome("14.0.835.202", ComparisonType.EQUAL)
-	    assert userAgentIdentService.isChrome("13.0.835", ComparisonType.GREATER)
-		assert userAgentIdentService.isChrome("15", ComparisonType.LESS)
+		assert userAgentIdentService.isChrome(ComparisonType.EQUAL, "14.0.835.202")
+	    assert userAgentIdentService.isChrome(ComparisonType.GREATER, "13.0.835")
+		assert userAgentIdentService.isChrome(ComparisonType.LESS, "15")
+
+	}
+
+	void testFirefox9_0andVersionChecking() {
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:9.0) Gecko/20100101 Firefox/9.0")
+
+	    assert userAgentIdentService.isFirefox()
+		assert userAgentIdentService.isFirefox(ComparisonType.EQUAL, "9.0")
+	    assert userAgentIdentService.isFirefox(ComparisonType.GREATER, "8.0")
+		assert userAgentIdentService.isFirefox(ComparisonType.LESS, "10.10")
 
 	}
 }

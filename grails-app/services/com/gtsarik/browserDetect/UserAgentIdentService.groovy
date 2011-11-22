@@ -13,7 +13,7 @@ class UserAgentIdentService extends WebTierService {
 
 	boolean transactional = false
 
-	def getUserAgentString() {
+	String getUserAgentString() {
 		getRequest().getHeader("user-agent")
 	}
 
@@ -46,29 +46,29 @@ class UserAgentIdentService extends WebTierService {
 		UserAgent.parseUserAgentString(userAgentString)
 	}
 
-	boolean isChrome(String version = null, ComparisonType comparisonType = null) {
-		isBrowser(Browser.CHROME, version, comparisonType)
+	boolean isChrome(ComparisonType comparisonType = null, String version = null) {
+		isBrowser(Browser.CHROME, comparisonType, version)
 	}
 
-	boolean isFirefox(String version = null, ComparisonType comparisonType = null) {
-		isBrowser(Browser.FIREFOX, version, comparisonType)
+	boolean isFirefox(ComparisonType comparisonType = null, String version = null) {
+		isBrowser(Browser.FIREFOX, comparisonType, version)
 	}
 
-	boolean isMsie(String version = null, ComparisonType comparisonType = null) {
+	boolean isMsie(ComparisonType comparisonType = null, String version = null) {
 		// why people use it?
-		isBrowser(Browser.IE, version, comparisonType)
+		isBrowser(Browser.IE, comparisonType, version)
 	}
 
-	boolean isOther(String version = null, ComparisonType comparisonType = null) {
-		isBrowser(Browser.UNKNOWN, version, comparisonType)
+	boolean isOther(ComparisonType comparisonType = null, String version = null) {
+		isBrowser(Browser.UNKNOWN, comparisonType, version)
 	}
 
-	boolean isSafari(String version = null, ComparisonType comparisonType = null) {
-		isBrowser(Browser.SAFARI, version, comparisonType)
+	boolean isSafari(ComparisonType comparisonType = null, String version = null) {
+		isBrowser(Browser.SAFARI, comparisonType, version)
 	}
 
-	private boolean isBrowser(Browser browserForChecking, String version = null,
-	                          ComparisonType comparisonType = null){
+	private boolean isBrowser(Browser browserForChecking, ComparisonType comparisonType = null,
+	                          String version = null){
 		def userAgent = getUserAgent()
 		def browser = userAgent.browser
 
