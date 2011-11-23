@@ -1,4 +1,4 @@
-class BrowserDetectGrailsPlugin {
+class BrowserDetectionGrailsPlugin {
     def version = "0.3"
     def grailsVersion = "1.3.2 > *"
     def dependsOn = [:]
