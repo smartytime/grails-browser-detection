@@ -1,6 +1,5 @@
 package com.tsarik.browserDetect
 
-import grails.test.*
 import com.gtsarik.browserDetect.ComparisonType
 
 import org.springframework.web.context.request.RequestContextHolder as RCH
@@ -16,7 +15,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert userAgentIdentService.isFirefox()
 	    assert !userAgentIdentService.isChrome()
 	    assert !userAgentIdentService.isSafari()
-	    assert !userAgentIdentService.isIOsDevice()
+	    assert !userAgentIdentService.isiOsDevice()
 	    assert !userAgentIdentService.isMobile()
 	    assert userAgentIdentService.getBrowserName() == "Firefox 3"
 	    assert userAgentIdentService.getBrowserVersion() == "3.6.9"
@@ -29,7 +28,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert !userAgentIdentService.isFirefox()
 	    assert userAgentIdentService.isChrome()
 		assert !userAgentIdentService.isSafari()
-	    assert !userAgentIdentService.isIOsDevice()
+	    assert !userAgentIdentService.isiOsDevice()
 	    assert !userAgentIdentService.isMobile()
 		assert userAgentIdentService.getBrowserName() == "Chrome"
 	    assert userAgentIdentService.getBrowserVersion() == "14.0.835.202"
@@ -43,7 +42,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert !userAgentIdentService.isChrome()
 		assert !userAgentIdentService.isSafari()
 		assert userAgentIdentService.isMsie()
-	    assert !userAgentIdentService.isIOsDevice()
+	    assert !userAgentIdentService.isiOsDevice()
 	    assert !userAgentIdentService.isMobile()
 		assert userAgentIdentService.getBrowserName() == "Internet Explorer 7"
 	    assert userAgentIdentService.getBrowserVersion() == "7.0"
@@ -57,7 +56,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert !userAgentIdentService.isChrome()
 		assert !userAgentIdentService.isSafari()
 		assert userAgentIdentService.isMsie()
-	    assert !userAgentIdentService.isIOsDevice()
+	    assert !userAgentIdentService.isiOsDevice()
 	    assert !userAgentIdentService.isMobile()
 		assert userAgentIdentService.getBrowserName() == "Internet Explorer 6"
 	    assert userAgentIdentService.getBrowserVersion() == "6.0"
@@ -71,8 +70,8 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert !userAgentIdentService.isChrome()
 		assert userAgentIdentService.isSafari()
 		assert !userAgentIdentService.isMsie()
-	    assert userAgentIdentService.isIOsDevice()
-		assert userAgentIdentService.isIPad()
+	    assert userAgentIdentService.isiOsDevice()
+		assert userAgentIdentService.isiPad()
 	    assert userAgentIdentService.isMobile()
 		assert userAgentIdentService.getBrowserName() == "Mobile Safari"
 	    assert userAgentIdentService.getBrowserVersion() == "4.0.4"
@@ -86,8 +85,8 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert !userAgentIdentService.isChrome()
 		assert userAgentIdentService.isSafari()
 		assert !userAgentIdentService.isMsie()
-	    assert userAgentIdentService.isIOsDevice()
-		assert userAgentIdentService.isIPhone()
+	    assert userAgentIdentService.isiOsDevice()
+		assert userAgentIdentService.isiPhone()
 	    assert userAgentIdentService.isMobile()
 		assert userAgentIdentService.getBrowserName() == "Mobile Safari"
 	    assert userAgentIdentService.getBrowserVersion() == "4.0.4"
@@ -100,7 +99,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert userAgentIdentService.isChrome()
 		assert userAgentIdentService.isChrome(ComparisonType.EQUAL, "14.0.835.202")
 	    assert userAgentIdentService.isChrome(ComparisonType.GREATER, "13.0.835")
-		assert userAgentIdentService.isChrome(ComparisonType.LESS, "15")
+		assert userAgentIdentService.isChrome(ComparisonType.LOWER, "15")
 
 	}
 
@@ -111,7 +110,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert userAgentIdentService.isFirefox()
 		assert userAgentIdentService.isFirefox(ComparisonType.EQUAL, "9.0")
 	    assert userAgentIdentService.isFirefox(ComparisonType.GREATER, "8.0")
-		assert userAgentIdentService.isFirefox(ComparisonType.LESS, "10.10")
+		assert userAgentIdentService.isFirefox(ComparisonType.LOWER, "10.10")
 
 	}
 }

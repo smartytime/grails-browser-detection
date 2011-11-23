@@ -67,6 +67,10 @@ class UserAgentIdentService extends WebTierService {
 		isBrowser(Browser.SAFARI, comparisonType, version)
 	}
 
+	boolean isOpera(ComparisonType comparisonType = null, String version = null) {
+		isBrowser(Browser.OPERA, comparisonType, version)
+	}
+
 	private boolean isBrowser(Browser browserForChecking, ComparisonType comparisonType = null,
 	                          String version = null){
 		def userAgent = getUserAgent()
@@ -93,7 +97,7 @@ class UserAgentIdentService extends WebTierService {
 				return true
 			}
 
-			if(compRes == -1 && comparisonType == ComparisonType.LESS){
+			if(compRes == -1 && comparisonType == ComparisonType.LOWER){
 				return true
 			}
 
@@ -145,17 +149,17 @@ class UserAgentIdentService extends WebTierService {
 		os.group == osForChecking || os == osForChecking
 	}
 
-	boolean isIPhone() {
+	boolean isiPhone() {
 		def os = getUserAgent().operatingSystem
 
 		os == OperatingSystem.iOS4_IPHONE || os == OperatingSystem.MAC_OS_X_IPHONE
 	}
 
-	boolean isIPad() {
+	boolean isiPad() {
 		isOs(OperatingSystem.MAC_OS_X_IPAD)
 	}
 
-	boolean isIOsDevice() {
+	boolean isiOsDevice() {
 		isOs(OperatingSystem.IOS)
 	}
 
@@ -165,6 +169,18 @@ class UserAgentIdentService extends WebTierService {
 
 	boolean isPalm() {
 		isOs(OperatingSystem.PALM)
+	}
+
+	boolean isLinux(){
+		isOs(OperatingSystem.LINUX)
+	}
+
+	boolean isWindows(){
+		isOs(OperatingSystem.WINDOWS)
+	}
+
+	boolean isOSX(){
+		isOs(OperatingSystem.MAC_OS_X)
 	}
 
 	boolean isWebkit() {
@@ -241,7 +257,7 @@ class UserAgentIdentService extends WebTierService {
 }
 
 public enum ComparisonType {
-	LESS,
+	LOWER,
 	EQUAL,
 	GREATER
 }

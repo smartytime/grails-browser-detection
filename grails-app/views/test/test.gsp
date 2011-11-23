@@ -9,12 +9,12 @@
 	        <browser:isMobile>
 		        a mobile browser. And it is...
 		        <browser:choice>
-			        <browser:isIPad>
+			        <browser:isiPad>
 				        iPad!
-			        </browser:isIPad>
-			        <browser:isIPhone>
+			        </browser:isiPad>
+			        <browser:isiPhone>
 				        iPhone!
-			        </browser:isIPhone>
+			        </browser:isiPhone>
 			        <browser:isAndroid>
 				        Android!
 			        </browser:isAndroid>

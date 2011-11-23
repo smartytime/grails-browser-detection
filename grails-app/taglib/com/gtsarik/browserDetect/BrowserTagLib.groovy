@@ -4,9 +4,9 @@ package com.gtsarik.browserDetect
  * <pre>
  * {@code
  * <browser:choice>
- * <browser:isIPhone>
+ * <browser:isiPhone>
  *     iPhone code
- * </browser:isIPhone>
+ * </browser:isiPhone>
  * <browser:isBlackberry>
  *     BlackBerry code
  * </browser:isBlackberry>
@@ -45,24 +45,24 @@ class BrowserTagLib {
 		handle body, { !userAgentIdentService.isMobile() }
     }
 
-	def isIPhone = { attrs, body ->
-        handle body, { userAgentIdentService.isIPhone() }
+	def isiPhone = { attrs, body ->
+        handle body, { userAgentIdentService.isiPhone() }
     }
 
-	def isNotIPhone = { attrs, body ->
-		handle body, { !userAgentIdentService.isIPhone() }
+	def isNotiPhone = { attrs, body ->
+		handle body, { !userAgentIdentService.isiPhone() }
     }
 
-	def isIPad = { attrs, body ->
-        handle body, { userAgentIdentService.isIPad() }
+	def isiPad = { attrs, body ->
+        handle body, { userAgentIdentService.isiPad() }
     }
 
-	def isNotIPad = { attrs, body ->
-		handle body, { !userAgentIdentService.isIPad() }
+	def isNotiPad = { attrs, body ->
+		handle body, { !userAgentIdentService.isiPad() }
     }
 
-	def isIOS = { attrs, body ->
-		handle body, { userAgentIdentService.isIOsDevice() }
+	def isiOS = { attrs, body ->
+		handle body, { userAgentIdentService.isiOsDevice() }
     }
 
 	def isAndroid = { attrs, body ->
@@ -105,6 +105,30 @@ class BrowserTagLib {
 	    handle body, { !userAgentIdentService.isMsie() }
     }
 
+	def isIE6 = { attrs, body ->
+		attrs.version = "6.0"
+
+	    handleBrowser attrs, body, "isMsie"
+    }
+
+	def isIE7 = { attrs, body ->
+		attrs.version = "7.0"
+
+	    handleBrowser attrs, body, "isMsie"
+    }
+
+	def isIE8 = { attrs, body ->
+		attrs.version = "8.0"
+
+	    handleBrowser attrs, body, "isMsie"
+    }
+
+	def isIE9 = { attrs, body ->
+		attrs.version = "9.0"
+
+	    handleBrowser attrs, body, "isMsie"
+    }
+
     def isFirefox = { attrs, body ->
 	    handleBrowser attrs, body, "isFirefox"
     }
@@ -129,6 +153,14 @@ class BrowserTagLib {
 	    handle body, { !userAgentIdentService.isSafari() }
     }
 
+	def isOpera = { attrs, body ->
+	    handleBrowser attrs, body, "isOpera"
+    }
+
+	def isNotOpera = { attrs, body ->
+	    handle body, { !userAgentIdentService.isOpera() }
+    }
+
     def isBlackberry = { attrs, body ->
 	    handle body, { userAgentIdentService.isBlackberry() }
     }
@@ -143,15 +175,15 @@ class BrowserTagLib {
 		if(attrs.version){
 			version = attrs.version
 			comparisonType = ComparisonType.EQUAL
-		} else if(attrs.versionLess){
-			version = attrs.versionLess
-			comparisonType = ComparisonType.LESS
-		} else if(attrs.versionMore){
-			version = attrs.versionMore
+		} else if(attrs.versionLower){
+			version = attrs.versionLower
+			comparisonType = ComparisonType.LOWER
+		} else if(attrs.versionGreater){
+			version = attrs.versionGreater
 			comparisonType = ComparisonType.GREATER
 		}
 
-		handle body, { userAgentIdentService."$serviceMethodName"(version, comparisonType) }
+		handle body, { userAgentIdentService."$serviceMethodName"(comparisonType, version) }
 	}
 
 	private def handle(body, condition){
