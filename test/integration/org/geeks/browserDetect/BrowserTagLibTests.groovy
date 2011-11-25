@@ -1,4 +1,4 @@
-package com.tsarik.browserDetect
+package org.geeks.browserDetect
 
 import org.springframework.web.context.request.RequestContextHolder as RCH
 import grails.test.GroovyPagesTestCase

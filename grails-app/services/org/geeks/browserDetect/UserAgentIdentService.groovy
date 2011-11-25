@@ -1,4 +1,4 @@
-package com.gtsarik.browserDetect
+package org.geeks.browserDetect
 
 import nl.bitwalker.useragentutils.UserAgent
 import nl.bitwalker.useragentutils.Browser

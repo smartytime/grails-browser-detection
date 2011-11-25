@@ -12,9 +12,9 @@
 		<resource>Config</resource>
 		<resource>DataSource</resource>
 		<resource>UrlMappings</resource>
-		<resource>com.gtsarik.browserDetect.UserAgentIdentService</resource>
-		<resource>com.gtsarik.browserDetect.WebTierService</resource>
-		<resource>com.gtsarik.browserDetect.BrowserTagLib</resource>
+		<resource>org.geeks.browserDetect.UserAgentIdentService</resource>
+		<resource>org.geeks.browserDetect.WebTierService</resource>
+		<resource>org.geeks.browserDetect.BrowserTagLib</resource>
 	</resources>
 	<dependencies/>
 	<behavior/>

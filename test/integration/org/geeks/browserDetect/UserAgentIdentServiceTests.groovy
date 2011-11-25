@@ -1,6 +1,4 @@
-package com.tsarik.browserDetect
-
-import com.gtsarik.browserDetect.ComparisonType
+package org.geeks.browserDetect
 
 import org.springframework.web.context.request.RequestContextHolder as RCH
 

@@ -1,4 +1,4 @@
-package com.gtsarik.browserDetect
+package org.geeks.browserDetect
 
 class TestController {
 

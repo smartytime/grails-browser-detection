@@ -1,4 +1,4 @@
-package com.gtsarik.browserDetect
+package org.geeks.browserDetect
 
 import org.springframework.web.context.request.RequestContextHolder as RCH 
  
