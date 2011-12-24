@@ -1,4 +1,4 @@
-package org.geeks.browserDetect
+package org.geeks.browserdetection
 
 class TestController {
 

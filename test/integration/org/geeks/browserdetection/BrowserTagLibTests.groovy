@@ -1,4 +1,4 @@
-package org.geeks.browserDetect
+package org.geeks.browserdetection
 
 import org.springframework.web.context.request.RequestContextHolder as RCH
 import grails.test.GroovyPagesTestCase
@@ -38,6 +38,13 @@ class BrowserTagLibTests extends GroovyPagesTestCase {
 	    assertOutputEquals("MSIE 7.0", "<browser:isIE7>MSIE 7.0</browser:isIE7>")
     }
 
+	void testIsIe7b() {
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 6.0)")
+
+	    assertOutputEquals("MSIE 7.0", "<browser:isIE7>MSIE 7.0</browser:isIE7>")
+    }
+
 	void testIsIe8() {
 		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
 	        "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.0; Trident/4.0; InfoPath.1; SV1; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET CLR 3.0.04506.30)")
@@ -68,6 +75,17 @@ class BrowserTagLibTests extends GroovyPagesTestCase {
 	        "Mozilla/5.0 (MSIE 7.0; Macintosh; U; SunOS; X11; gu; SV1; InfoPath.2; .NET CLR 3.0.04506.30; .NET CLR 3.0.04506.648)")
 
 	    assertOutputEquals("greater MSIE 6.0", "<browser:isMsie versionGreater='6.0'>greater MSIE 6.0</browser:isMsie>"
+			    + "<browser:isMsie versionGreater='7.0'>greater MSIE 7.0</browser:isMsie>"
+			    + "<browser:isFirefox>firefox</browser:isFirefox>"
+			    + "<browser:isChrome>chrome</browser:isChrome>"
+			    + "<browser:isMobile>mobile</browser:isMobile>")
+    }
+
+	void testVersionСomparison_isSafari5() {
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/5.0 (Windows; U; Windows NT 6.1; zh-HK) AppleWebKit/533.18.1 (KHTML, like Gecko) Version/5.0.2 Safari/533.18.5")
+
+	    assertOutputEquals("Safari 5.*", "<browser:isSafari version='5.*'>Safari 5.*</browser:isSafari>"
 			    + "<browser:isMsie versionGreater='7.0'>greater MSIE 7.0</browser:isMsie>"
 			    + "<browser:isFirefox>firefox</browser:isFirefox>"
 			    + "<browser:isChrome>chrome</browser:isChrome>"

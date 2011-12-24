@@ -1,36 +1,21 @@
 class BrowserDetectionGrailsPlugin {
-    def version = "0.3"
-    def grailsVersion = "1.3.2 > *"
+    def version = "0.3.2"
+
+    def grailsVersion = "1.2.2 > *"
+
     def dependsOn = [:]
+
     def pluginExcludes = [
             "grails-app/views/error.gsp",
-            "grails-app/views/test/test.gsp",
-            "grails-app/views/layouts/main.gsp",
-            "grails-app/controllers/com/nolatechhelp/browserDetect/TestController.groovy"
+            "grails-app/controllers/org/geeks/browserdetection/TestController.groovy",
+            "grails-app/views/index.gsp"
     ]
 
     def author = "Kevin M. Gill, Edvinas Bartkus, Gennady Tsarik"
-    def authorEmail = "vare6gin@gmail.com"
-    def title = "Browser Detection Plug-in"
+    def authorEmail = "kevin@wthr.us, edvinas@geeks.lt, vare6gin@gmail.com"
+    def title = "Browser detection"
     def description = '''\\
+This plugin provides service and tag library for browser detection. You can know what is the browser, version, operating system and language specified in request headers.
 '''
-    def documentation = "http://grails.org/plugin/browser-detect"
-
-    def doWithWebDescriptor = { xml ->
-    }
-
-    def doWithSpring = {
-    }
-
-    def doWithDynamicMethods = { ctx ->
-    }
-
-    def doWithApplicationContext = { applicationContext ->
-    }
-
-    def onChange = { event ->
-    }
-
-    def onConfigChange = { event ->
-    }
+    def documentation = "http://grails.org/plugin/browser-detection"
 }

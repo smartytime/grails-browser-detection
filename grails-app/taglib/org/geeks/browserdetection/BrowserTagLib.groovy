@@ -1,4 +1,4 @@
-package org.geeks.browserDetect
+package org.geeks.browserdetection
 
 /**
  * <pre>
@@ -106,25 +106,25 @@ class BrowserTagLib {
     }
 
 	def isIE6 = { attrs, body ->
-		attrs.version = "6.0"
+		attrs.version = "6.*"
 
 	    handleBrowser attrs, body, "isMsie"
     }
 
 	def isIE7 = { attrs, body ->
-		attrs.version = "7.0"
+		attrs.version = "7.*"
 
 	    handleBrowser attrs, body, "isMsie"
     }
 
 	def isIE8 = { attrs, body ->
-		attrs.version = "8.0"
+		attrs.version = "8.*"
 
 	    handleBrowser attrs, body, "isMsie"
     }
 
 	def isIE9 = { attrs, body ->
-		attrs.version = "9.0"
+		attrs.version = "9.*"
 
 	    handleBrowser attrs, body, "isMsie"
     }
@@ -167,6 +167,22 @@ class BrowserTagLib {
 
     def isNotBlackberry = { attrs, body ->
 	    handle body, { !userAgentIdentService.isBlackberry() }
+    }
+
+	def isWindows = { attrs, body ->
+	    handle body, { userAgentIdentService.isWindows() }
+    }
+
+	def isNotWindows = { attrs, body ->
+	    handle body, { !userAgentIdentService.isWindows() }
+    }
+
+	def isLinux = { attrs, body ->
+	    handle body, { userAgentIdentService.isLinux() }
+    }
+
+	def isNotLinux = { attrs, body ->
+	    handle body, { !userAgentIdentService.isLinux() }
     }
 
 	private def handleBrowser(attrs, body, serviceMethodName){

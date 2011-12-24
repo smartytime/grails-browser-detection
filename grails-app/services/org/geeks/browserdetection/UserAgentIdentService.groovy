@@ -1,4 +1,4 @@
-package org.geeks.browserDetect
+package org.geeks.browserdetection
 
 import nl.bitwalker.useragentutils.UserAgent
 import nl.bitwalker.useragentutils.Browser
@@ -9,7 +9,31 @@ import javax.transaction.NotSupportedException
 
 class UserAgentIdentService extends WebTierService {
 
+	final static String CHROME = "chrome"
+    final static String FIREFOX = "firefox"
+    final static String SAFARI = "safari"
+    final static String OTHER = "other"
+    final static String MSIE = "msie"
+    final static String UNKNOWN = "unknown"
+    final static String BLACKBERRY = "blackberry"
+    final static String SEAMONKEY = "seamonkey"
+    final static String OPERA = "opera"
+
+    final static int CLIENT_CHROME = 0
+    final static int CLIENT_FIREFOX = 1
+    final static int CLIENT_SAFARI = 2
+    final static int CLIENT_OTHER = 3
+    final static int CLIENT_MSIE = 4
+    final static int CLIENT_UNKNOWN = 5
+    final static int CLIENT_BLACKBERRY = 6
+    final static int CLIENT_SEAMONKEY = 7
+    final static int CLIENT_OPERA = 8
+
 	final static String AGENT_INFO_TOKEN = "${this.name}_agentInfo"
+
+	final static def MOBILE_BROWSERS = [OperatingSystem.iOS4_IPHONE, OperatingSystem.iOS5_IPHONE, OperatingSystem.MAC_OS_X_IPAD,
+			OperatingSystem.MAC_OS_X_IPHONE, OperatingSystem.MAC_OS_X_IPOD, OperatingSystem.BADA, OperatingSystem.PSP]
+	final static def MOBILE_BROWSER_GROUPS = [OperatingSystem.ANDROID, OperatingSystem.BLACKBERRY, OperatingSystem.KINDLE, OperatingSystem.SYMBIAN]
 
 	boolean transactional = false
 
@@ -34,6 +58,12 @@ class UserAgentIdentService extends WebTierService {
 			log.warn "Discarding existing agent info and creating new..."
 		} else {
 			log.debug "User agent info does not exist in session scope, creating..."
+		}
+
+		if(userAgentString == null){
+			log.warn "User agent header is not set"
+
+			userAgentString = ""
 		}
 
 		userAgent = parseUserAgent(userAgentString)
@@ -87,11 +117,11 @@ class UserAgentIdentService extends WebTierService {
 				throw new IllegalArgumentException("comparisonType should be specified")
 			}
 
-			def compRes = compareVersions(userAgent.browserVersion.version, version)
-
-			if(compRes == 0 && comparisonType == ComparisonType.EQUAL){
-				return true
+			if(comparisonType == ComparisonType.EQUAL){
+				return VersionHelper.equals(userAgent.browserVersion.version, version)
 			}
+
+			def compRes = VersionHelper.compare(userAgent.browserVersion.version, version)
 
 			if(compRes == 1 && comparisonType == ComparisonType.GREATER){
 				return true
@@ -105,42 +135,6 @@ class UserAgentIdentService extends WebTierService {
 		}
 
 		true
-	}
-
-	/**
-	 * Compares versions like x.y.z
-	 *
-	 * @return a negative integer, zero, or a positive integer as the first argument is less than,
-	 * equal to, or greater than the second
-	 */
-	private int compareVersions(v1, v2){
-		if(!v1){
-			if(!v2){
-				return 0
-			} else {
-				return -1
-			}
-		}
-
-		if(!v2){
-			return 1
-		}
-
-		def v1parts = v1.split("\\.")
-		def v2parts = v2.split("\\.")
-
-		def length = Math.min(v1parts.size(), v2parts.size())
-
-		int compRes
-		for(int i=0; i<length; i++){
-			compRes = v1parts[i].toInteger().compareTo(v2parts[i].toInteger())
-
-			if(compRes != 0){
-				return compRes
-			}
-		}
-
-		v1parts.size() <=> v2parts.size()
 	}
 
 	private boolean isOs(OperatingSystem osForChecking){
@@ -201,12 +195,48 @@ class UserAgentIdentService extends WebTierService {
 		isBrowser(Browser.SEAMONKEY)
 	}
 
+	/**
+	 * Returns true if client is a mobile phone or any Android device, iPhone, iPad, iPod, PSP, Blackberry, Bada device
+	 */
 	boolean isMobile() {
-		getUserAgent().browser.browserType == BrowserType.MOBILE_BROWSER
+		def userAgent = getUserAgent()
+		def os = userAgent.operatingSystem
+
+		userAgent.browser.browserType == BrowserType.MOBILE_BROWSER || os in MOBILE_BROWSERS || (os.group && os.group in MOBILE_BROWSER_GROUPS)
 	}
 
-	String getBrowserName(){
+	/**
+	 * Returns the browser name.
+	 */
+	String getBrowser(){
 		getUserAgent().browser.name
+	}
+
+	/**
+	 * It is left for compatibility reasons. Use {@link #getBrowser() } instead.
+	 */
+	@Deprecated
+	String getBrowserName(){
+		switch (getBrowserType()) {
+			case CLIENT_FIREFOX:
+				return FIREFOX;
+			case CLIENT_CHROME:
+				return CHROME;
+			case CLIENT_SAFARI:
+				return SAFARI;
+			case CLIENT_SEAMONKEY:
+				return SEAMONKEY;
+			case CLIENT_MSIE:
+				return MSIE;
+			case CLIENT_BLACKBERRY:
+				return BLACKBERRY;
+			case CLIENT_OPERA:
+				return OPERA;
+			case CLIENT_OTHER:
+			case CLIENT_UNKNOWN:
+			default:
+				return OTHER;
+		}
 	}
 
 	String getBrowserVersion() {
@@ -217,24 +247,48 @@ class UserAgentIdentService extends WebTierService {
 		getUserAgent().operatingSystem.name
 	}
 
+	@Deprecated
 	String getPlatform() {
-		throw new NotSupportedException()
+		getUserAgent().operatingSystem
 	}
 
+	/**
+	 * Internet Explorer specific.
+	 */
+	@Deprecated
 	String getSecurity() {
 		throw new NotSupportedException()
 	}
 
+	@Deprecated
 	String getLanguage() {
 		throw new NotSupportedException()
 	}
 
-	/**
-	 * It is left for compatibility reasons.
-	 */
-	@Deprecated
-	String getBrowserType() {
-		getBrowserName()
+	int getBrowserType() {
+		def browser = getUserAgent().browser
+		browser = browser.group ? browser.group : browser
+
+		switch (browser){
+			case Browser.FIREFOX:
+				return CLIENT_FIREFOX;
+			case Browser.CHROME:
+				return CLIENT_CHROME;
+			case Browser.SAFARI:
+				return CLIENT_SAFARI;
+			case Browser.SEAMONKEY:
+				return CLIENT_SEAMONKEY;
+			case Browser.IE:
+				return CLIENT_MSIE;
+			case Browser.OPERA:
+				return CLIENT_OPERA;
+		}
+
+		if(getUserAgent().operatingSystem == OperatingSystem.BLACKBERRY){
+			return CLIENT_BLACKBERRY
+		}
+
+		return CLIENT_OTHER
 	}
 
 	/**
@@ -245,7 +299,7 @@ class UserAgentIdentService extends WebTierService {
 		def userAgent = getUserAgent()
 
 		[
-			browserType: userAgent.browser.name,
+			browserType: getBrowserType(),
 			browserVersion: userAgent.browserVersion.version,
 			operatingSystem: userAgent.operatingSystem.name,
 			platform: "",

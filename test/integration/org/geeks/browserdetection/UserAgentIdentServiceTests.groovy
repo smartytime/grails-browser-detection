@@ -1,4 +1,6 @@
-package org.geeks.browserDetect
+package org.geeks.browserdetection
+
+import org.geeks.browserdetection.ComparisonType
 
 import org.springframework.web.context.request.RequestContextHolder as RCH
 
@@ -15,7 +17,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert !userAgentIdentService.isSafari()
 	    assert !userAgentIdentService.isiOsDevice()
 	    assert !userAgentIdentService.isMobile()
-	    assert userAgentIdentService.getBrowserName() == "Firefox 3"
+	    assert userAgentIdentService.getBrowser() == "Firefox 3"
 	    assert userAgentIdentService.getBrowserVersion() == "3.6.9"
     }
 
@@ -28,7 +30,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 		assert !userAgentIdentService.isSafari()
 	    assert !userAgentIdentService.isiOsDevice()
 	    assert !userAgentIdentService.isMobile()
-		assert userAgentIdentService.getBrowserName() == "Chrome"
+		assert userAgentIdentService.getBrowser() == "Chrome 14"
 	    assert userAgentIdentService.getBrowserVersion() == "14.0.835.202"
 	}
 
@@ -42,7 +44,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 		assert userAgentIdentService.isMsie()
 	    assert !userAgentIdentService.isiOsDevice()
 	    assert !userAgentIdentService.isMobile()
-		assert userAgentIdentService.getBrowserName() == "Internet Explorer 7"
+		assert userAgentIdentService.getBrowser() == "Internet Explorer 7"
 	    assert userAgentIdentService.getBrowserVersion() == "7.0"
 	}
 
@@ -56,7 +58,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 		assert userAgentIdentService.isMsie()
 	    assert !userAgentIdentService.isiOsDevice()
 	    assert !userAgentIdentService.isMobile()
-		assert userAgentIdentService.getBrowserName() == "Internet Explorer 6"
+		assert userAgentIdentService.getBrowser() == "Internet Explorer 6"
 	    assert userAgentIdentService.getBrowserVersion() == "6.0"
 	}
 
@@ -71,7 +73,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert userAgentIdentService.isiOsDevice()
 		assert userAgentIdentService.isiPad()
 	    assert userAgentIdentService.isMobile()
-		assert userAgentIdentService.getBrowserName() == "Mobile Safari"
+		assert userAgentIdentService.getBrowser() == "Mobile Safari"
 	    assert userAgentIdentService.getBrowserVersion() == "4.0.4"
 	}
 
@@ -86,7 +88,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert userAgentIdentService.isiOsDevice()
 		assert userAgentIdentService.isiPhone()
 	    assert userAgentIdentService.isMobile()
-		assert userAgentIdentService.getBrowserName() == "Mobile Safari"
+		assert userAgentIdentService.getBrowser() == "Mobile Safari"
 	    assert userAgentIdentService.getBrowserVersion() == "4.0.4"
 	}
 
@@ -110,5 +112,45 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert userAgentIdentService.isFirefox(ComparisonType.GREATER, "8.0")
 		assert userAgentIdentService.isFirefox(ComparisonType.LOWER, "10.10")
 
+	}
+
+	void testOldApi(){
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:9.0) Gecko/20100101 Firefox/9.0")
+
+		assert userAgentIdentService.getBrowserType() == UserAgentIdentService.CLIENT_FIREFOX
+		assert userAgentIdentService.getBrowserName() == UserAgentIdentService.FIREFOX
+	}
+
+	void testIsMobileIPhone(){
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/5.0 (iPod; U; CPU iPhone OS 4_3_3 like Mac OS X; ja-jp) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5")
+
+		assert userAgentIdentService.isMobile()
+	}
+
+	void testIsMobileBlackberry(){
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/5.0 (BlackBerry; U; BlackBerry 9800; zh-TW) AppleWebKit/534.1+ (KHTML, like Gecko) Version/6.0.0.246 Mobile Safari/534.1+")
+
+		assert userAgentIdentService.isMobile()
+	}
+
+	void testIsMobileAndroid(){
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "Mozilla/5.0 (Linux; U; Android 2.3; en-us) AppleWebKit/999+ (KHTML, like Gecko) Safari/999.9")
+
+		assert userAgentIdentService.isMobile()
+	}
+
+	/**
+	 * Tests for proper handling of the case of unset user-agent header
+	 */
+	void testNullUserAgentHeader(){
+
+		assert RCH.currentRequestAttributes().currentRequest.getHeader("user-agent") == null
+		assert !userAgentIdentService.isMobile()
+
+		// TODO: add appropriate method to userAgentIdentService
 	}
 }
