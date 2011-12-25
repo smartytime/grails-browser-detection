@@ -19,6 +19,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert !userAgentIdentService.isMobile()
 	    assert userAgentIdentService.getBrowser() == "Firefox 3"
 	    assert userAgentIdentService.getBrowserVersion() == "3.6.9"
+	    assert !userAgentIdentService.isOther()
     }
 
 	void testChrome14_0_835_202() {
@@ -32,6 +33,7 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 	    assert !userAgentIdentService.isMobile()
 		assert userAgentIdentService.getBrowser() == "Chrome 14"
 	    assert userAgentIdentService.getBrowserVersion() == "14.0.835.202"
+		assert !userAgentIdentService.isOther()
 	}
 
 	void testMSIE7() {
@@ -151,6 +153,15 @@ class UserAgentIdentServiceTests extends GroovyTestCase {
 		assert RCH.currentRequestAttributes().currentRequest.getHeader("user-agent") == null
 		assert !userAgentIdentService.isMobile()
 
-		// TODO: add appropriate method to userAgentIdentService
+		assert userAgentIdentService.isOther()
+	}
+
+	void testIsOther(){
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "abs; abc")
+
+		assert userAgentIdentService.isOther()
+		assert !userAgentIdentService.isChrome()
+		assert !userAgentIdentService.isMobile()
 	}
 }

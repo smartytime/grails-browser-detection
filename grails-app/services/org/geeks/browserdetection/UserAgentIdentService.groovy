@@ -89,16 +89,19 @@ class UserAgentIdentService extends WebTierService {
 		isBrowser(Browser.IE, comparisonType, version)
 	}
 
-	boolean isOther(ComparisonType comparisonType = null, String version = null) {
-		isBrowser(Browser.UNKNOWN, comparisonType, version)
-	}
-
 	boolean isSafari(ComparisonType comparisonType = null, String version = null) {
 		isBrowser(Browser.SAFARI, comparisonType, version)
 	}
 
 	boolean isOpera(ComparisonType comparisonType = null, String version = null) {
 		isBrowser(Browser.OPERA, comparisonType, version)
+	}
+
+	/**
+	 * Returns true if browser is unknown
+	 */
+	boolean isOther() {
+		isBrowser(Browser.UNKNOWN)
 	}
 
 	private boolean isBrowser(Browser browserForChecking, ComparisonType comparisonType = null,
@@ -265,6 +268,7 @@ class UserAgentIdentService extends WebTierService {
 		throw new NotSupportedException()
 	}
 
+	@Deprecated
 	int getBrowserType() {
 		def browser = getUserAgent().browser
 		browser = browser.group ? browser.group : browser

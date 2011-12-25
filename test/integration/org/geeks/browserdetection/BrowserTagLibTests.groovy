@@ -91,4 +91,11 @@ class BrowserTagLibTests extends GroovyPagesTestCase {
 			    + "<browser:isChrome>chrome</browser:isChrome>"
 			    + "<browser:isMobile>mobile</browser:isMobile>")
     }
+
+	void testIsOther() {
+		RCH.currentRequestAttributes().currentRequest.addHeader("user-agent",
+	        "undefined (undefined; undefined)")
+
+	    assertOutputEquals("undefined", "<browser:isOther>undefined</browser:isOther>")
+    }
 }

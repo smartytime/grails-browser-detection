@@ -161,6 +161,20 @@ class BrowserTagLib {
 	    handle body, { !userAgentIdentService.isOpera() }
     }
 
+	/**
+	 * Renders the content if browser is undefined
+	 */
+	def isOther = { attrs, body ->
+	    handle body, { userAgentIdentService.isOther() }
+    }
+
+	/**
+	 * Renders the content if browser is not undefined
+	 */
+	def isNotOther = { attrs, body ->
+	    handle body, { userAgentIdentService.isNotOther() }
+    }
+
     def isBlackberry = { attrs, body ->
 	    handle body, { userAgentIdentService.isBlackberry() }
     }
