@@ -37,14 +37,24 @@ class UserAgentIdentService extends WebTierService {
 
 	boolean transactional = false
 
+	/**
+	 * Returns user-agent header value from thread-bound RequestContextHolder
+	 */
 	String getUserAgentString() {
-		getRequest().getHeader("user-agent")
+		getUserAgentString(getRequest())
+	}
+
+	/**
+	 * Returns user-agent header value from the passed request
+	 */
+	String getUserAgentString(def request) {
+		request.getHeader("user-agent")
 	}
 
 	private def getUserAgent() {
 
 		def userAgentString = getUserAgentString()
-		def userAgent = getRequest().session.getAttribute(AGENT_INFO_TOKEN)
+		def userAgent = request.session.getAttribute(AGENT_INFO_TOKEN)
 
 		// returns cached instance
 		if (userAgent != null && userAgent.userAgentString == userAgentString) {
@@ -60,6 +70,7 @@ class UserAgentIdentService extends WebTierService {
 			log.debug "User agent info does not exist in session scope, creating..."
 		}
 
+		// fallback for users without user-agent header
 		if(userAgentString == null){
 			log.warn "User agent header is not set"
 
@@ -205,7 +216,8 @@ class UserAgentIdentService extends WebTierService {
 		def userAgent = getUserAgent()
 		def os = userAgent.operatingSystem
 
-		userAgent.browser.browserType == BrowserType.MOBILE_BROWSER || os in MOBILE_BROWSERS || (os.group && os.group in MOBILE_BROWSER_GROUPS)
+		userAgent.browser.browserType == BrowserType.MOBILE_BROWSER || os in MOBILE_BROWSERS ||
+				(os.group && os.group in MOBILE_BROWSER_GROUPS)
 	}
 
 	/**
