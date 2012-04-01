@@ -21,16 +21,23 @@ class BrowserTagLib {
 
 	static namespace = 'browser'
 
-	private static def CHOICE_STACK = "${this.name}_choiceStack"
+	private static def CHOICE_STACK_NAME = "${this.name}_choiceStack"
 
 	private enum HierarchyLevelType {
 		ChoiceTag,
 		ConditionTag
 	}
 
+	/**
+	 * Describes a hierarchy level as the choice tag and
+	 * a condition tag
+	 */
 	private class HierarchyLevelHolder {
 		HierarchyLevelType levelType
 
+		/**
+		 * It makes sense only for the choice tag
+		 */
 		Closure otherwise
 		boolean successfulCondition
 	}
@@ -161,6 +168,14 @@ class BrowserTagLib {
 	    handle body, { !userAgentIdentService.isOpera() }
     }
 
+	def isSeamoneky = { attrs, body ->
+	    handle body, { userAgentIdentService.isSeamonkey() }
+    }
+
+	def isNotSeamonkey = { attrs, body ->
+	    handle body, { !userAgentIdentService.isSeamonkey() }
+    }
+
 	/**
 	 * Renders the content if browser is undefined
 	 */
@@ -216,7 +231,12 @@ class BrowserTagLib {
 		handle body, { userAgentIdentService."$serviceMethodName"(comparisonType, version) }
 	}
 
-	private def handle(body, condition){
+	/**
+	 * @param body a tag body object
+	 * @param condition a closure that returns true of false
+	 * @return true if
+	 */
+	private boolean handle(body, condition){
 		def stack = getStack()
 		def parent = (!stack.empty()) ? stack.peek() : null
 
@@ -235,10 +255,15 @@ class BrowserTagLib {
 
 			stack.pop()
 
+			// handles the choice tag
 			if(parent && parent.levelType == HierarchyLevelType.ChoiceTag){
 				parent.successfulCondition = true
 			}
+
+			return true
 		}
+
+		false
 	}
 
 	def choice = { attrs, body ->
@@ -267,15 +292,15 @@ class BrowserTagLib {
 	 * Returns hierarchy stack, Creates one if it does
 	 * not exist yet.
 	 */
-	private Stack<HierarchyLevelHolder> getStack(){
-		try {
-			pageScope."$CHOICE_STACK"
-		} catch (e){
-			def stack = new Stack()
-			pageScope."$CHOICE_STACK" = stack
+	private Stack<HierarchyLevelHolder> getStack() {
+		def stack = request."$CHOICE_STACK_NAME"
 
-			stack
+		if(stack == null) {
+			stack = new Stack()
+			request."$CHOICE_STACK_NAME" = stack
 		}
+
+		stack
 	}
 
 	/**

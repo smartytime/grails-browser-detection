@@ -13,3 +13,5 @@ plugin.xml
 *.iml
 *.ipr
 *.iws
+
+*.zip
