@@ -23,7 +23,7 @@ class BrowserTagLib {
 
 	private static def CHOICE_STACK_NAME = "${this.name}_choiceStack"
 
-	private enum HierarchyLevelType {
+	enum HierarchyLevelType {
 		ChoiceTag,
 		ConditionTag
 	}
@@ -32,7 +32,7 @@ class BrowserTagLib {
 	 * Describes a hierarchy level as the choice tag and
 	 * a condition tag
 	 */
-	private class HierarchyLevelHolder {
+	class HierarchyLevelHolder {
 		HierarchyLevelType levelType
 
 		/**

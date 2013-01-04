@@ -6,12 +6,21 @@ grails.project.dependency.resolution = {
 
     inherits("global") {
     }
-    log "warn" 
-    repositories {        
-        grailsPlugins()
-        grailsHome()
+
+	log "warn"
+
+	repositories {
+		grailsCentral()
     }
+
     dependencies {
     }
+
+	plugins {
+		build(":tomcat:$grailsVersion",
+				":release:2.2.0") {
+			export = false
+		}
+	}
 
 }
