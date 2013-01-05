@@ -1,5 +1,8 @@
 package org.geeks.browserdetection
 
+import org.geeks.browserdetection.taglib.HierarchyLevelType
+import org.geeks.browserdetection.taglib.HierarchyLevelHolder
+
 /**
  * <pre>
  * {@code
@@ -22,25 +25,6 @@ class BrowserTagLib {
 	static namespace = 'browser'
 
 	private static def CHOICE_STACK_NAME = "${this.name}_choiceStack"
-
-	enum HierarchyLevelType {
-		ChoiceTag,
-		ConditionTag
-	}
-
-	/**
-	 * Describes a hierarchy level as the choice tag and
-	 * a condition tag
-	 */
-	class HierarchyLevelHolder {
-		HierarchyLevelType levelType
-
-		/**
-		 * It makes sense only for the choice tag
-		 */
-		Closure otherwise
-		boolean successfulCondition
-	}
 
     def userAgentIdentService
 
