@@ -1,5 +1,5 @@
 class BrowserDetectionGrailsPlugin {
-    def version = "0.4.2"
+    def version = "0.4.3"
     def grailsVersion = "1.2.2 > *"
 
     def author = "Gennady Tsarik"
