@@ -5,7 +5,9 @@ import nl.bitwalker.useragentutils.Browser
 import nl.bitwalker.useragentutils.OperatingSystem
 import nl.bitwalker.useragentutils.RenderingEngine
 import nl.bitwalker.useragentutils.BrowserType
-import javax.transaction.NotSupportedException
+import org.apache.commons.lang.NotImplementedException
+
+//import javax.transaction.NotSupportedException
 
 class UserAgentIdentService extends WebTierService {
 
@@ -51,7 +53,7 @@ class UserAgentIdentService extends WebTierService {
 		request.getHeader("user-agent")
 	}
 
-	private def getUserAgent() {
+	def getUserAgent() {
 
 		def userAgentString = getUserAgentString()
 		def userAgent = request.session.getAttribute(AGENT_INFO_TOKEN)
@@ -272,12 +274,12 @@ class UserAgentIdentService extends WebTierService {
 	 */
 	@Deprecated
 	String getSecurity() {
-		throw new NotSupportedException()
+		throw new NotImplementedException()
 	}
 
 	@Deprecated
 	String getLanguage() {
-		throw new NotSupportedException()
+		throw new NotImplementedException()
 	}
 
 	@Deprecated

@@ -17,10 +17,10 @@ grails.project.dependency.resolution = {
     }
 
 	plugins {
-		build(":tomcat:$grailsVersion",
-				":release:2.2.0") {
-			export = false
-		}
+        build ":tomcat:${grailsVersion}"
+        build (":release:2.2.1") {
+            export = false
+        }
 	}
 
 }
